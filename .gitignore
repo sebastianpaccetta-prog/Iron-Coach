@@ -1,0 +1,28 @@
+# Secrets - never commit
+credentials.json
+token.json
+.env*
+
+# Raw exports (large, personal) - only the normalized DB output is derived from these
+data/strava/
+data/apple_health/
+strava_export_*/
+apple_health_export_*/
+data/normalized.db
+
+# Saved web articles / reference material
+*.html
+*_files/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Next.js
+site/node_modules/
+site/.next/
+site/out/
+site/.vercel/
+site/*.tsbuildinfo
+site/next-env.d.ts
