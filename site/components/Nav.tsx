@@ -8,6 +8,7 @@ const LINKS = [
   { href: "/feed", label: "Activity feed" },
   { href: "/progress", label: "Progress" },
   { href: "/plan", label: "Plan overview" },
+  { href: "/update", label: "How to update" },
 ];
 
 export default function Nav() {
