@@ -1,14 +1,14 @@
 {
- "generated_at": "2026-09-15T14:59:26",
+ "generated_at": "2026-09-17T11:46:12",
  "athlete": "Sebastian",
  "race": {
   "name": "Half Ironman 70.3",
   "date": "2027-02-01",
-  "days_to_race": 139
+  "days_to_race": 137
  },
  "zones": {
   "max_hr": 199,
-  "resting_hr": 53.8,
+  "resting_hr": 54.0,
   "run": {
    "lthr": 154,
    "hr_zones": [
@@ -123,7 +123,7 @@
   "focus": "Build aerobic base and swim consistency; keep intensity low and frequency high.",
   "reasons": [
    "Base phase (cap 7.7 h/wk). Last week you did 2.1 h, so this week ramps to at most +10%.",
-   "Recovery metrics look good (HRV up 9% vs baseline; Resting HR below baseline)."
+   "Recovery metrics look good (HRV up 10% vs baseline; Resting HR below baseline)."
   ],
   "workouts": [
    {
@@ -1630,20 +1630,6 @@
  ],
  "load": [
   {
-   "date": "2026-05-19",
-   "tss": 42.7,
-   "ctl": 13.6,
-   "atl": 29.0,
-   "tsb": -15.4
-  },
-  {
-   "date": "2026-05-20",
-   "tss": 45.9,
-   "ctl": 14.3,
-   "atl": 31.4,
-   "tsb": -17.0
-  },
-  {
    "date": "2026-05-21",
    "tss": 0.0,
    "ctl": 14.0,
@@ -2468,21 +2454,23 @@
    "ctl": 16.0,
    "atl": 13.9,
    "tsb": 2.1
+  },
+  {
+   "date": "2026-09-16",
+   "tss": 0.0,
+   "ctl": 15.6,
+   "atl": 11.9,
+   "tsb": 3.7
+  },
+  {
+   "date": "2026-09-17",
+   "tss": 0.0,
+   "ctl": 15.2,
+   "atl": 10.2,
+   "tsb": 5.0
   }
  ],
  "recovery": [
-  {
-   "date": "2026-05-19",
-   "hrv": 77.49425,
-   "resting_hr": 61.0,
-   "vo2max": 55.69
-  },
-  {
-   "date": "2026-05-20",
-   "hrv": 73.20576,
-   "resting_hr": 56.0,
-   "vo2max": 55.156666666666666
-  },
   {
    "date": "2026-05-21",
    "hrv": 79.9559,
@@ -2868,20 +2856,20 @@
  "recovery_status": {
   "flag": "good",
   "reasons": [
-   "HRV up 9% vs baseline",
+   "HRV up 10% vs baseline",
    "Resting HR below baseline"
   ],
-  "hrv_7d": 69.9,
-  "hrv_42d": 64.2,
-  "resting_hr_7d": 53.8,
+  "hrv_7d": 71.5,
+  "hrv_42d": 64.9,
+  "resting_hr_7d": 54.0,
   "resting_hr_42d": 59.5,
   "sleep_7d": null,
   "vo2max": 59.1
  },
  "fitness": {
-  "ctl": 16.0,
-  "atl": 13.9,
-  "tsb": 2.1,
-  "ctl_4w_ago": 12.6
+  "ctl": 15.2,
+  "atl": 10.2,
+  "tsb": 5.0,
+  "ctl_4w_ago": 13.5
  }
 }
