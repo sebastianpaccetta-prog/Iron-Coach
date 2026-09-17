@@ -93,6 +93,8 @@ script regenerates. The site is public by design (no login).
    Flags: `--no-calendar` skips Google Calendar, `--dry-run` only prints the plan,
    `--push` commits `site/public/data.json` + `data/plan.json` and pushes (which redeploys
    the site). Omit `--push` to review first and push manually.
+   `--feel good|normal|tired` overrides the recovery flag - use `--feel tired` for a lighter
+   week with no hard intervals. Handy if you skip the Apple Health export entirely.
 
 3. Read the summary printed at the end: last week's completion, fitness trend, and the goals
    for the coming week. Open the calendar or the website for the details.

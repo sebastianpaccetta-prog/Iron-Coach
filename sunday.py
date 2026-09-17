@@ -39,6 +39,9 @@ def main():
     ap.add_argument("--no-calendar", action="store_true", help="skip Google Calendar sync")
     ap.add_argument("--dry-run", action="store_true", help="do not write calendar, site data or plan")
     ap.add_argument("--today", help="override today's date (YYYY-MM-DD) for testing")
+    ap.add_argument("--feel", choices=["good", "normal", "tired"],
+                    help="how you feel this week; overrides the Apple Health recovery flag "
+                         "(tired = lighter week, no hard intervals)")
     args = ap.parse_args()
     today = date.fromisoformat(args.today) if args.today else date.today()
 
@@ -59,6 +62,9 @@ def main():
         activities = db.fetch_activities(conn)
         recovery = db.fetch_recovery(conn, since=today - timedelta(days=180))
         rec_status = recovery_status(recovery, end=today)
+        if args.feel:
+            rec_status["flag"] = {"good": "good", "normal": "normal", "tired": "caution"}[args.feel]
+            rec_status["reasons"] = [f"you reported feeling {args.feel}"]
         zones = build_zones(activities, resting_hr=rec_status.get("resting_hr_7d"))
         for a in activities:
             a["tss"] = activity_tss(a, zones)
