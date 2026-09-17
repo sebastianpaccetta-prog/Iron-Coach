@@ -9,7 +9,7 @@ import re
 from collections import defaultdict
 from datetime import datetime, timedelta
 
-from .config import APPLE_HEALTH_DIR_CANDIDATES, find_dir
+from .config import APPLE_HEALTH_DIR_CANDIDATES, APPLE_HEALTH_KEY_FILE, find_dir
 
 TYPES = {
     "HKQuantityTypeIdentifierRestingHeartRate": "resting_hr",
@@ -84,10 +84,8 @@ def parse_export(path, since=None):
 
 
 def load_apple_health(since=None):
-    d = find_dir(APPLE_HEALTH_DIR_CANDIDATES)
+    d = find_dir(APPLE_HEALTH_DIR_CANDIDATES, APPLE_HEALTH_KEY_FILE)
     if d is None:
         return []
-    xml_path = d / "export.xml"
-    if not xml_path.exists():
-        return []
-    return list(parse_export(xml_path, since=since))
+    print(f"   reading {d / APPLE_HEALTH_KEY_FILE}")
+    return list(parse_export(d / APPLE_HEALTH_KEY_FILE, since=since))

@@ -7,7 +7,7 @@ plan needs (duration, distance, HR, power, elevation, RPE).
 import csv
 from datetime import datetime, timezone
 
-from .config import STRAVA_DIR_CANDIDATES, find_dir
+from .config import STRAVA_DIR_CANDIDATES, STRAVA_KEY_FILE, find_dir
 
 SPORT_MAP = {
     "run": "run", "trailrun": "run", "virtualrun": "run", "treadmill": "run",
@@ -93,10 +93,8 @@ def parse_activities_csv(path):
 
 
 def load_strava():
-    d = find_dir(STRAVA_DIR_CANDIDATES)
+    d = find_dir(STRAVA_DIR_CANDIDATES, STRAVA_KEY_FILE)
     if d is None:
         return []
-    csv_path = d / "activities.csv"
-    if not csv_path.exists():
-        return []
-    return parse_activities_csv(csv_path)
+    print(f"   reading {d / STRAVA_KEY_FILE}")
+    return parse_activities_csv(d / STRAVA_KEY_FILE)

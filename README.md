@@ -102,6 +102,8 @@ script regenerates. The site is public by design (no login).
 You can run it any day; if it is not Saturday/Sunday the plan is still generated for the
 *next* Monday and "last week" means the last full week.
 
+Step-by-step export instructions, folder naming and a weekly checklist: `HOW_TO_UPDATE.md`.
+
 ## How the plan is built
 
 * **Goal**: `GOAL_TIME_H` in `pipeline/config.py` (5.0 = sub-5 70.3). Every race-pace
