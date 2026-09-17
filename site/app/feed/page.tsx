@@ -17,13 +17,13 @@ export default function Feed() {
                   {fmtDate(a.date, { weekday: "long", month: "long", day: "numeric", year: "numeric" })} at {a.start_time.slice(0, 5)}
                 </div>
                 <div className="stats">
-                  {a.distance_km > 0 && (
-                    <div><span className="l">Distance</span><span className="v">{a.distance_km.toFixed(1)} km</span></div>
+                  {a.distance > 0 && (
+                    <div><span className="l">Distance</span><span className="v">{a.distance.toFixed(1)} {data.units.dist}</span></div>
                   )}
                   <div><span className="l">Time</span><span className="v">{fmtMin(a.duration_min)}</span></div>
                   {a.pace && <div><span className="l">Pace</span><span className="v">{a.pace}</span></div>}
-                  {a.speed_kmh && <div><span className="l">Speed</span><span className="v">{a.speed_kmh} km/h</span></div>}
-                  {a.elevation_m > 0 && <div><span className="l">Elev</span><span className="v">{a.elevation_m} m</span></div>}
+                  {a.speed && <div><span className="l">Speed</span><span className="v">{a.speed} {data.units.speed}</span></div>}
+                  {a.elevation_m > 0 && <div><span className="l">Elev</span><span className="v">{data.units.dist === "mi" ? `${Math.round(a.elevation_m * 3.28084)} ft` : `${a.elevation_m} m`}</span></div>}
                   {a.avg_hr && <div><span className="l">Avg HR</span><span className="v">{Math.round(a.avg_hr)}</span></div>}
                   {a.avg_power && <div><span className="l">Power</span><span className="v">{Math.round(a.avg_power)} W</span></div>}
                   {a.rpe && <div><span className="l">RPE</span><span className="v">{a.rpe}</span></div>}

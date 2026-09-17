@@ -104,14 +104,22 @@ You can run it any day; if it is not Saturday/Sunday the plan is still generated
 
 ## How the plan is built
 
+* **Goal**: `GOAL_TIME_H` in `pipeline/config.py` (5.0 = sub-5 70.3). Every race-pace
+  target in the plan (swim /100 m, bike mph, run /mi) is derived from it, and the summary
+  tells you whether the goal run pace is realistic against your current threshold pace.
+  `UNITS = "imperial"` in the same file; set `"metric"` for km, km/h and min/km.
 * **Phases** (measured backwards from race day, `pipeline/plan.py -> PHASES`):
-  base (>15 weeks out), build (8 weeks), peak (4 weeks), taper (2 weeks), race week.
-* **Volume**: next week = last week's actual hours x 1.10 at most, capped by the phase cap
-  (`PEAK_WEEK_HOURS x PHASE_TARGET_FRACTION`). Every 4th week is a deload at 65%.
+  base (>15 weeks out), build (8 weeks), peak (5 weeks), taper (1 week), race week.
+* **Volume**: the peak week is chosen inside `PEAK_WEEK_HOURS_RANGE` (11-14 h) from your
+  recent weekly hours and CTL. Next week = last week's actual hours x 1.10 at most, capped
+  by the phase cap (`peak x PHASE_TARGET_FRACTION`). Every 4th week is a deload at 65%.
+  The long run never exceeds 110% of your longest run in the last 30 days.
 * **Adjustments**: if you completed fewer than 60% of last week's sessions the volume is held;
-  if HRV is >10% below its 6-week baseline, resting HR is >4 bpm up, or sleep averages
-  <6.5 h, the week is 15% lighter and hard sessions become easy; if form (TSB) is below -25
-  another 10% comes off.
+  if 7-day HRV drops below your own baseline band (mean - 0.5 SD), resting HR is >4 bpm up,
+  or sleep averages <6.5 h, the week is 15% lighter and hard sessions become easy; if form
+  (TSB) is below -25 another 10% comes off.
+* **Why these rules**: see `SCIENCE.md` - each rule is tied to a post-2020 study or labelled
+  as convention.
 * **Sport split** by phase (`SPORT_SPLIT`) and a weekly template (`WEEK_TEMPLATE`):
   Mon swim + strength, Tue run quality, Wed bike quality, Thu swim, Fri easy run or rest,
   Sat long ride (+ brick run from build phase), Sun long run. Sessions under their minimum
@@ -122,7 +130,8 @@ You can run it any day; if it is not Saturday/Sunday the plan is still generated
 * **Load**: TSS = hours x IF^2 x 100 with IF from power/FTP, HR/LTHR, RPE or a per-sport
   default. CTL = 42-day average, ATL = 7-day, TSB = CTL - ATL.
 
-Tweak numbers at the top of `pipeline/plan.py`; nothing else needs to change.
+Tweak numbers at the top of `pipeline/plan.py` and the goal in `pipeline/config.py`;
+nothing else needs to change.
 
 ## Troubleshooting
 

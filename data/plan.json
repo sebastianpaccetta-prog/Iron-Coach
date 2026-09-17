@@ -6,10 +6,12 @@
  "weeks_to_race": 19,
  "target_hours": 3.9,
  "planned_hours": 4.0,
- "focus": "Build aerobic base and swim consistency; keep intensity low and frequency high.",
+ "focus": "Pyramidal: mostly Z1-Z2 with one tempo session per sport; build swim consistency and heavy strength.",
  "reasons": [
+  "Peak week set to 11.0 h (range 11-14 h) from your recent 3.4 h/wk and CTL 15.",
+  "Goal 5.00 h needs ~7:47/mi off the bike; that is 104% of your current threshold speed (8:05/mi) - threshold needs to come down before this is realistic.",
   "Base phase (cap 7.7 h/wk). Last week you did 2.1 h, so this week ramps to at most +10%.",
-  "Recovery metrics look good (HRV up 10% vs baseline; Resting HR below baseline)."
+  "Recovery metrics look good (Resting HR below baseline)."
  ],
  "workouts": [
   {
@@ -28,10 +30,10 @@
    "weekday": "Monday",
    "sport": "strength",
    "role": "strength",
-   "title": "Strength + mobility",
+   "title": "Strength: heavy + plyo",
    "duration_min": 30,
-   "intensity": "Moderate",
-   "description": "Core (planks, dead bugs, bird dogs) 10 min. Squats, RDLs, step-ups, single-leg calf raises 3x8-10. Hip mobility 10 min. Finish with 5 min stretching.",
+   "intensity": "Heavy",
+   "description": "Core (planks, dead bugs, bird dogs) 10 min. Squats or trap-bar deadlift 4x4-6 heavy (>80% 1RM, 3 min rest), RDLs 3x6, single-leg calf raises 3x10. Then 3x8 pogo hops + 3x5 drop jumps. Hip mobility 10 min.",
    "emoji": "💪"
   },
   {
@@ -41,7 +43,7 @@
    "role": "quality",
    "title": "Tempo run",
    "duration_min": 30,
-   "intensity": "Z3 (139-145 bpm), ~5:46-5:20/km",
+   "intensity": "Z3 (139-145 bpm), ~9:17-8:35/mi",
    "description": "WU 15 min easy. 2x10 min at Z3 with 3 min jog between. CD 10 min. Add 4x20s strides.",
    "emoji": "🏃"
   },
@@ -86,7 +88,7 @@
    "title": "Long ride",
    "duration_min": 80,
    "intensity": "Z2 (119-125 bpm)",
-   "description": "Steady aerobic ride, mostly Z2 (119-125 bpm). Practise race nutrition: 60-90 g carbs/hour, drink to thirst.",
+   "description": "Steady aerobic ride, mostly Z2 (119-125 bpm). Fuel 90 g carbs/h (2:1 glucose:fructose); on long rides in build/peak practise up to 120 g/h to train the gut. Drink to thirst.",
    "emoji": "🚴"
   },
   {
@@ -96,7 +98,7 @@
    "role": "long",
    "title": "Long run",
    "duration_min": 40,
-   "intensity": "Z2 (131-137 bpm), ~6:21-5:46/km",
+   "intensity": "Z2 (131-137 bpm), ~10:13-9:17/mi",
    "description": "Easy, conversational. Walk breaks are fine early in the plan. Fuel every 30-40 min.",
    "emoji": "🏃"
   }
@@ -216,9 +218,9 @@
   },
   {
    "week_start": "2027-01-11",
-   "phase": "taper",
+   "phase": "peak",
    "is_recovery": false,
-   "target_hours": 6.1,
+   "target_hours": 11.0,
    "weeks_to_race": 3
   },
   {
@@ -232,7 +234,7 @@
    "week_start": "2027-01-25",
    "phase": "race",
    "is_recovery": false,
-   "target_hours": 3.3,
+   "target_hours": 4.4,
    "weeks_to_race": 1
   }
  ]

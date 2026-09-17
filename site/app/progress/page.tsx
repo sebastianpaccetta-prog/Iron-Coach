@@ -7,12 +7,13 @@ export default function Progress() {
   const avgHours = last4.reduce((s, w) => s + w.total_hours, 0) / Math.max(1, last4.length);
   const totals = data.weekly.reduce(
     (acc, w) => {
-      for (const s of ["swim", "bike", "run"] as const) acc[s] += w.by_sport[s].km;
+      for (const s of ["swim", "bike", "run"] as const) acc[s] += w.by_sport[s].dist;
       return acc;
     },
     { swim: 0, bike: 0, run: 0 }
   );
   const z = data.zones;
+  const u = data.units.dist;
 
   return (
     <>
@@ -28,7 +29,7 @@ export default function Progress() {
         <div className="card stat accent"><span className="label">Fitness (CTL)</span><span className="value">{Math.round(data.fitness.ctl)}</span><span className="hint">42-day load average</span></div>
         <div className="card stat"><span className="label">Fatigue (ATL)</span><span className="value">{Math.round(data.fitness.atl)}</span><span className="hint">7-day load average</span></div>
         <div className="card stat"><span className="label">Form (TSB)</span><span className="value">{Math.round(data.fitness.tsb)}</span><span className="hint">{data.fitness.tsb > 5 ? "Fresh" : data.fitness.tsb < -20 ? "Fatigued" : "Training"}</span></div>
-        <div className="card stat"><span className="label">Avg / week (4w)</span><span className="value">{fmtHours(avgHours)}</span><span className="hint">{Math.round(totals.bike)} km bike · {Math.round(totals.run)} km run · {Math.round(totals.swim * 1000) / 1000} km swim (20w)</span></div>
+        <div className="card stat"><span className="label">Avg / week (4w)</span><span className="value">{fmtHours(avgHours)}</span><span className="hint">{Math.round(totals.bike)} {u} bike · {Math.round(totals.run)} {u} run · {totals.swim.toFixed(1)} {u} swim (20w)</span></div>
       </div>
 
       <div className="card" style={{ marginTop: 16 }}>
@@ -55,7 +56,7 @@ export default function Progress() {
 
       <div className="grid grid-2" style={{ marginTop: 16 }}>
         <div className="card">
-          <h2>Run zones (LTHR {z.run.lthr} bpm · threshold {z.run.threshold_pace ?? "–"}/km)</h2>
+          <h2>Run zones (LTHR {z.run.lthr} bpm · threshold {z.run.threshold_pace ?? "–"}/{u})</h2>
           <table className="zones-table">
             <thead><tr><th>Zone</th><th>Name</th><th>HR</th><th>Pace</th></tr></thead>
             <tbody>

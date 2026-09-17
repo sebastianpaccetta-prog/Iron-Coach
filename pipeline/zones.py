@@ -7,6 +7,8 @@ common 5-zone LTHR model (Friel).
 """
 from datetime import date, timedelta
 
+from .config import DIST_LABEL, DIST_M
+
 LTHR_ZONE_PCTS = [
     ("Z1", "Recovery", 0.00, 0.85),
     ("Z2", "Aerobic / Endurance", 0.85, 0.89),
@@ -85,10 +87,11 @@ def _hr_zones(lthr):
 
 
 def _fmt_pace(speed_mps):
+    """m/s -> 'm:ss' per DIST_M (mile or km, see config.UNITS)."""
     if not speed_mps:
         return None
-    sec_per_km = 1000 / speed_mps
-    return f"{int(sec_per_km // 60)}:{int(sec_per_km % 60):02d}"
+    sec = DIST_M / speed_mps
+    return f"{int(sec // 60)}:{int(sec % 60):02d}"
 
 
 def build_zones(activities, resting_hr=None):
@@ -109,7 +112,8 @@ def build_zones(activities, resting_hr=None):
         "max_hr": max_hr,
         "resting_hr": resting_hr,
         "run": {"lthr": run_lthr, "hr_zones": _hr_zones(run_lthr),
-                "threshold_pace": _fmt_pace(thr_speed), "pace_zones": pace_zones},
+                "threshold_pace": _fmt_pace(thr_speed), "pace_zones": pace_zones,
+                "pace_unit": DIST_LABEL},
         "bike": {"lthr": bike_lthr, "hr_zones": _hr_zones(bike_lthr), "ftp": ftp},
         "swim": {"note": "Use RPE: Z2 = conversational, Z4 = hard but repeatable"},
     }

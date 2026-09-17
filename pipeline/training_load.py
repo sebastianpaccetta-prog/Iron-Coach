@@ -8,12 +8,20 @@ ATL (fatigue) is 7-day, TSB (form) = CTL - ATL.
 from collections import defaultdict
 from datetime import date, timedelta
 
+from .config import DIST_M
+
 CTL_DAYS = 42
 ATL_DAYS = 7
 DEFAULT_IF = {"run": 0.75, "bike": 0.70, "swim": 0.70, "strength": 0.60, "other": 0.50}
 # Strength/other sessions accumulate less cardio stress than the HR suggests.
 SPORT_TSS_SCALE = {"run": 1.0, "bike": 1.0, "swim": 1.0, "strength": 0.6, "other": 0.5}
-MAX_WEEKLY_RAMP = 0.10  # no more than 10% week-over-week volume increase
+MAX_WEEKLY_RAMP = 0.10  # week-over-week volume guard (convention, not evidence - see SCIENCE.md)
+# Single-session spike guard: a run longer than 110% of your longest run in the
+# last 30 days raises overuse-injury rate 1.6-2.3x (Nielsen 2025, 5,205 runners).
+MAX_LONG_RUN_SPIKE = 1.10
+SPIKE_LOOKBACK_DAYS = 30
+HRV_SWC_SD_FACTOR = 0.5   # smallest worthwhile change = 0.5 x SD of baseline
+HRV_MIN_BASELINE_DAYS = 10
 
 
 def _if_from_rpe(rpe):
@@ -73,8 +81,17 @@ def week_start(d):
     return d - timedelta(days=d.weekday())
 
 
+def longest_recent_run_min(activities, end=None, days=SPIKE_LOOKBACK_DAYS):
+    """Longest single run (minutes) in the last `days` days, or None."""
+    end = end or date.today()
+    cut = (end - timedelta(days=days)).isoformat()
+    runs = [(a.get("duration_s") or 0) / 60 for a in activities
+            if a["sport"] == "run" and a["date"] >= cut]
+    return max(runs) if runs else None
+
+
 def weekly_summary(activities, weeks=16, end=None):
-    """Per-week totals by sport: hours, km, tss, sessions."""
+    """Per-week totals by sport: hours, dist (miles or km per config.UNITS), tss, sessions."""
     end = end or date.today()
     this_monday = week_start(end)
     buckets = {}
@@ -83,7 +100,7 @@ def weekly_summary(activities, weeks=16, end=None):
         buckets[monday.isoformat()] = {
             "week_start": monday.isoformat(),
             "total_hours": 0.0, "total_tss": 0.0, "sessions": 0,
-            "by_sport": {s: {"hours": 0.0, "km": 0.0, "tss": 0.0, "sessions": 0}
+            "by_sport": {s: {"hours": 0.0, "dist": 0.0, "tss": 0.0, "sessions": 0}
                          for s in ("swim", "bike", "run", "strength", "other")},
         }
     for a in activities:
@@ -94,7 +111,7 @@ def weekly_summary(activities, weeks=16, end=None):
         s = b["by_sport"][a["sport"]]
         h = (a.get("duration_s") or 0) / 3600
         s["hours"] += h
-        s["km"] += (a.get("distance_m") or 0) / 1000
+        s["dist"] += (a.get("distance_m") or 0) / DIST_M
         s["tss"] += a.get("tss") or 0
         s["sessions"] += 1
         b["total_hours"] += h
@@ -106,7 +123,7 @@ def weekly_summary(activities, weeks=16, end=None):
         b["total_tss"] = round(b["total_tss"], 1)
         for s in b["by_sport"].values():
             s["hours"] = round(s["hours"], 2)
-            s["km"] = round(s["km"], 1)
+            s["dist"] = round(s["dist"], 1)
             s["tss"] = round(s["tss"], 1)
     return out
 
@@ -118,9 +135,12 @@ def recovery_status(recovery, end=None):
     recent_cut = (end - timedelta(days=7)).isoformat()
     base_cut = (end - timedelta(days=42)).isoformat()
 
+    def vals(metric, lo, hi):
+        return [m[metric] for d, m in recovery.items() if lo <= d <= hi and metric in m]
+
     def avg(metric, lo, hi):
-        vals = [m[metric] for d, m in recovery.items() if lo <= d <= hi and metric in m]
-        return (sum(vals) / len(vals), len(vals)) if vals else (None, 0)
+        v = vals(metric, lo, hi)
+        return (sum(v) / len(v), len(v)) if v else (None, 0)
 
     hrv_r, n_hrv = avg("hrv", recent_cut, end.isoformat())
     hrv_b, _ = avg("hrv", base_cut, recent_cut)
@@ -131,13 +151,22 @@ def recovery_status(recovery, end=None):
 
     reasons, score = [], 0
     if hrv_r and hrv_b:
-        delta = (hrv_r - hrv_b) / hrv_b
-        if delta < -0.10:
+        # 7-day rolling HRV vs the athlete's own baseline band. The band is the
+        # smallest worthwhile change (0.5 x SD of the baseline), which is how the
+        # HRV-guided trials (Javaloyes 2020, Nuuttila 2022) decide to back off.
+        # With too few baseline days we fall back to a fixed 10% band.
+        base_vals = vals("hrv", base_cut, recent_cut)
+        if len(base_vals) >= HRV_MIN_BASELINE_DAYS:
+            sd = (sum((v - hrv_b) ** 2 for v in base_vals) / (len(base_vals) - 1)) ** 0.5
+            band = HRV_SWC_SD_FACTOR * sd
+        else:
+            band = 0.10 * hrv_b
+        if hrv_r < hrv_b - band:
             score -= 1
-            reasons.append(f"HRV down {abs(delta) * 100:.0f}% vs 6-week baseline")
-        elif delta > 0.05:
+            reasons.append(f"HRV {hrv_r:.0f} ms is below your normal band ({hrv_b - band:.0f}-{hrv_b + band:.0f} ms)")
+        elif hrv_r > hrv_b + band:
             score += 1
-            reasons.append(f"HRV up {delta * 100:.0f}% vs baseline")
+            reasons.append(f"HRV {hrv_r:.0f} ms is above your normal band ({hrv_b - band:.0f}-{hrv_b + band:.0f} ms)")
     if rhr_r and rhr_b:
         if rhr_r - rhr_b > 4:
             score -= 1

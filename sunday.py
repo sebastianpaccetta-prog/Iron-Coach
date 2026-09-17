@@ -72,7 +72,7 @@ def main():
         load = load_series(activities, end=today)
         weekly = weekly_summary(activities, weeks=20, end=today)
         print(f"   Run LTHR {zones['run']['lthr']} bpm | Bike LTHR {zones['bike']['lthr']} bpm | "
-              f"Max HR {zones['max_hr']} | Threshold pace {zones['run']['threshold_pace']} /km")
+              f"Max HR {zones['max_hr']} | Threshold pace {zones['run']['threshold_pace']} /{zones['run']['pace_unit']}")
         print(f"   CTL {load[-1]['ctl']} | ATL {load[-1]['atl']} | TSB {load[-1]['tsb']} | Recovery: {rec_status['flag']}")
 
         # 4. Evaluate last week, generate next --------------------------------
@@ -81,7 +81,7 @@ def main():
         last_monday = monday - timedelta(days=7)
         last_plan_json = db.get_plan(conn, last_monday.isoformat())
         last_eval = evaluate_completion(json.loads(last_plan_json), activities) if last_plan_json else None
-        plan = generate_week(today, weekly, load, rec_status, zones, last_eval)
+        plan = generate_week(today, weekly, load, rec_status, zones, last_eval, activities)
         if not args.dry_run:
             db.save_plan(conn, plan["week_start"], json.dumps(plan), datetime.now().isoformat())
             PLAN_OUTPUT_PATH.write_text(json.dumps(plan, indent=1, ensure_ascii=False), encoding="utf-8")

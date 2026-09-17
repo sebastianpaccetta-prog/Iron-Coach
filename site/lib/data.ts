@@ -42,13 +42,13 @@ export interface Activity {
   sport: Sport;
   name: string;
   duration_min: number;
-  distance_km: number;
+  distance: number;
   elevation_m: number;
   avg_hr: number | null;
   max_hr: number | null;
   avg_power: number | null;
   pace: string | null;
-  speed_kmh: number | null;
+  speed: number | null;
   rpe: number | null;
   tss: number | null;
 }
@@ -58,12 +58,13 @@ export interface WeeklyBucket {
   total_hours: number;
   total_tss: number;
   sessions: number;
-  by_sport: Record<string, { hours: number; km: number; tss: number; sessions: number }>;
+  by_sport: Record<string, { hours: number; dist: number; tss: number; sessions: number }>;
 }
 
 export interface SiteData {
   generated_at: string;
   athlete: string;
+  units: { dist: string; speed: string };
   race: { name: string; date: string; days_to_race: number };
   zones: any;
   this_week: {
