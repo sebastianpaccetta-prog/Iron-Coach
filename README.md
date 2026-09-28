@@ -54,7 +54,9 @@ clinical records, workout routes) is ignored.
 2. *APIs & Services -> Library* -> search **Google Calendar API** -> **Enable**.
 3. *APIs & Services -> OAuth consent screen* -> External -> fill in the app name and your email
    -> add yourself under **Test users** (this keeps the app in testing mode, which is fine
-   for personal use).
+   for personal use). In testing mode Google expires the sign-in after 7 days, so each
+   Sunday run opens the browser to sign in again. To stop that, press **Publish app** on
+   the consent screen (no Google review is needed for your own account).
 4. *APIs & Services -> Credentials -> Create credentials -> OAuth client ID* ->
    Application type **Desktop app** -> Create -> **Download JSON**.
 5. Save that file as `credentials.json` in the project root (next to `sunday.py`).
@@ -140,6 +142,7 @@ nothing else needs to change.
 * *"credentials.json not found"* - finish step 3 of the setup, or run with `--no-calendar`.
 * *Google says the app is unverified* - click *Advanced -> Go to Iron Coach (unsafe)*; it is
   your own app in testing mode.
-* *Token expired / revoked* - delete `token.json` and run again.
+* *Token expired / revoked* - the pipeline now opens the browser to sign in again by
+  itself; if that fails, delete `token.json` and run again.
 * *Nothing new was inserted* - activities are deduplicated on date + start time + sport, so
   re-importing the same export is a no-op. That is expected.

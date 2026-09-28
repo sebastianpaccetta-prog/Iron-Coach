@@ -70,6 +70,7 @@ export interface SiteData {
   this_week: {
     week_start: string;
     week_end: string;
+    start_date?: string;
     phase: string;
     is_recovery: boolean;
     weeks_to_race: number;

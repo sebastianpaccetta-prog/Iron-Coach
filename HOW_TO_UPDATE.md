@@ -13,7 +13,9 @@ from a data file this project generates on your PC. So the weekly routine is:
 2. Strava emails you a link within a few minutes to a few hours. Download the zip
    (`export_12345678.zip`).
 3. Unzip it. You get a folder with `activities.csv` at the top level plus lots of other
-   CSVs and an `activities/` folder of raw files. Only `activities.csv` is used.
+   CSVs and an `activities/` folder of raw files. `activities.csv` is the main source;
+   if it is missing, the raw `.fit` / `.gpx` / `.tcx` files in `activities/` are read
+   instead (and anything in that folder newer than the CSV is picked up too).
 
 ## 2. Export from Apple Health (optional - gives HRV / resting HR / sleep)
 
@@ -32,6 +34,7 @@ Put the unzipped folders anywhere in these spots:
 ```
 Iron Coach/
   data/strava/activities.csv              <- Strava (this is what you have now)
+  data/strava/activities/                 <- or just the raw files folder from the export
   strava_export_2026-09-28/activities.csv <- or a dated folder at the top level
   data/apple_health/export.xml            <- Apple Health
   apple_health_export_2026-09-28/export.xml  <- or a dated folder at the top level
@@ -86,9 +89,12 @@ goal-pace check, and the week ahead.
 
 ## Troubleshooting
 
-* **`0 new` activities** - the export you dropped in is older than what is already in the
-  database, or the pipeline picked an old folder. Check the `reading ...` line; delete
-  stale export folders.
+* **`0 new` activities** (the pipeline prints a `! No new activities` warning) - neither
+  `activities.csv` nor the `activities/` folder of the new export made it into the
+  project, the export is older than what is already in the database, or the pipeline
+  picked an old folder. Check the `reading ...` line; delete stale export folders.
+* **A session shows as missed** - it has to be the same sport in the same Monday-Sunday
+  week and at least 60% of the planned minutes; moving it to another day is fine.
 * **Nothing about HRV in the summary** - Apple Health export missing or older than 7 days.
   Use `--feel`.
 * **Push rejected (email privacy)** - run

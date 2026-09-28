@@ -1,11 +1,14 @@
-"""Parse Strava bulk export activities.csv into normalized activity rows.
+"""Parse a Strava bulk export into normalized activity rows.
 
-Only activities.csv is read. The raw .fit/.gpx files and the ~40 social/profile
-CSVs in the export are ignored - the summary CSV already carries everything the
-plan needs (duration, distance, HR, power, elevation, RPE).
+activities.csv is the main source: it already carries everything the plan needs
+(moving time, distance, HR, power, elevation, RPE). The raw .fit/.gpx/.tcx files
+in the export's activities/ folder are the fallback for anything the CSV does not
+cover - no CSV at all, or files newer than the CSV (see parse_activity_files).
+The ~40 social/profile CSVs in the export are ignored.
 """
 import csv
 from datetime import datetime, timezone
+from pathlib import Path
 
 from .config import STRAVA_DIR_CANDIDATES, STRAVA_KEY_FILE, find_dir
 
@@ -88,13 +91,62 @@ def parse_activities_csv(path):
                 "avg_speed_mps": _num(_get(row, idx, "Average Speed")),
                 "perceived_exertion": _num(_get(row, idx, "Perceived Exertion")),
                 "strava_relative_effort": _num(_get(row, idx, "Relative Effort")),
+                "filename": Path(_get(row, idx, "Filename") or "").name or None,
             })
     return rows
 
 
-def load_strava():
+def activity_files(candidates=None):
+    """Raw activity files in any export location: <dir>/activities/, one folder
+    deeper (<dir>/<export>/activities/), or loose in <dir>. Deduplicated by name."""
+    from .parse_activity_files import is_activity_file
+    found = {}
+    for c in candidates or STRAVA_DIR_CANDIDATES:
+        if not c.is_dir():
+            continue
+        for folder in [c, c / "activities", *c.glob("*/activities")]:
+            if folder.is_dir():
+                for f in folder.iterdir():
+                    if is_activity_file(f):
+                        found.setdefault(f.name, f)
+    return sorted(found.values(), key=lambda f: f.name)
+
+
+def load_strava(known_source_ids=(), imported_until=None):
+    """Rows from the newest activities.csv, plus rows parsed from raw activity
+    files that the CSV does not list and that start after its newest activity
+    (or after `imported_until`, the newest CSV-imported (date, start_time) already
+    in the database, whichever is later). Files whose "file:<name>" source id is
+    in known_source_ids were imported on an earlier run and are not re-parsed."""
+    from .parse_activity_files import parse_activity_file
+    rows = []
     d = find_dir(STRAVA_DIR_CANDIDATES, STRAVA_KEY_FILE)
-    if d is None:
-        return []
-    print(f"   reading {d / STRAVA_KEY_FILE}")
-    return parse_activities_csv(d / STRAVA_KEY_FILE)
+    if d is not None:
+        print(f"   reading {d / STRAVA_KEY_FILE}")
+        rows = parse_activities_csv(d / STRAVA_KEY_FILE)
+    else:
+        print(f"   no {STRAVA_KEY_FILE} found - reading the raw activity files instead")
+    listed = {r["filename"] for r in rows if r.get("filename")}
+    csv_newest = max([(r["date"], r["start_time"]) for r in rows] + ([tuple(imported_until)] if imported_until else []),
+                     default=None)
+
+    extra, skipped_old = [], 0
+    for f in activity_files():
+        if f.name in listed or f"file:{f.name}" in known_source_ids:
+            continue
+        r = parse_activity_file(f)
+        if r is None:
+            continue
+        # A file older than the CSV's newest activity but missing from it was
+        # deleted or merged on Strava (or is already in the db from an earlier
+        # CSV); the CSV is the authority for that period.
+        if csv_newest and (r["date"], r["start_time"]) <= csv_newest:
+            skipped_old += 1
+            continue
+        extra.append(r)
+    if extra:
+        print(f"   {len(extra)} activities read from raw files"
+              + (f" (newer than {STRAVA_KEY_FILE})" if rows else ""))
+    if skipped_old:
+        print(f"   {skipped_old} raw files skipped: already imported or covered by {STRAVA_KEY_FILE}")
+    return rows + extra

@@ -25,7 +25,12 @@ export default function ThisWeek() {
             {fmtHours(wk.planned_hours)}
             <small>planned</small>
           </div>
-          <div className="meta">Week of {fmtDate(wk.week_start, { month: "long", day: "numeric" })} · {wk.weeks_to_race} weeks to go</div>
+          <div className="meta">
+            {wk.start_date && wk.start_date !== wk.week_start
+              ? `Starts ${fmtDate(wk.start_date, { weekday: "long", month: "long", day: "numeric" })}`
+              : `Week of ${fmtDate(wk.week_start, { month: "long", day: "numeric" })}`}
+            {" · "}{wk.weeks_to_race} weeks to go
+          </div>
         </div>
         <div className="right">
           <Countdown />

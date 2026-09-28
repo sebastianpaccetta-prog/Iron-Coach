@@ -1,7 +1,9 @@
 """SQLite storage for normalized activities and recovery metrics.
 
 Activities are deduplicated on (date, start_time, sport) so re-running the
-Sunday pipeline over an overlapping export only inserts new rows.
+Sunday pipeline over an overlapping export only inserts new rows. Rows read from
+raw activity files (source_id "file:<name>") are replaced by the activities.csv
+row once a CSV lists that file.
 """
 import sqlite3
 from contextlib import contextmanager
@@ -79,12 +81,24 @@ def upsert_activities(conn, rows):
     placeholders = ", ".join("?" for _ in ACTIVITY_COLUMNS)
     inserted = 0
     for r in rows:
+        if r.get("filename"):
+            replaced = conn.execute("DELETE FROM activities WHERE source_id = ?", (f"file:{r['filename']}",)).rowcount
+            inserted -= replaced  # an upgrade from file row to CSV row is not a new activity
         cur = conn.execute(
             f"INSERT OR IGNORE INTO activities ({cols}) VALUES ({placeholders})",
             [r.get(c) for c in ACTIVITY_COLUMNS],
         )
         inserted += cur.rowcount
     return inserted
+
+
+def import_state(conn):
+    """(source ids of rows read from raw files, newest (date, start_time) imported
+    from an activities.csv) - lets load_strava skip files it has already covered."""
+    file_ids = {r[0] for r in conn.execute("SELECT source_id FROM activities WHERE source_id LIKE 'file:%'")}
+    newest = conn.execute("SELECT date, start_time FROM activities WHERE source_id NOT LIKE 'file:%' "
+                          "ORDER BY date DESC, start_time DESC LIMIT 1").fetchone()
+    return file_ids, (tuple(newest) if newest else None)
 
 
 def upsert_recovery(conn, rows):

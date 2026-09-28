@@ -19,7 +19,7 @@ from pipeline import db
 from pipeline.config import DB_PATH, PLAN_OUTPUT_PATH, RACE_DATE, ROOT
 from pipeline.parse_apple_health import load_apple_health
 from pipeline.parse_strava import load_strava
-from pipeline.plan import evaluate_completion, generate_week, upcoming_monday
+from pipeline.plan import evaluate_completion, generate_week, plan_anchor
 from pipeline.site_export import export_site_data
 from pipeline.training_load import activity_tss, load_series, recovery_status, weekly_summary
 from pipeline.zones import build_zones
@@ -39,18 +39,27 @@ def main():
     ap.add_argument("--no-calendar", action="store_true", help="skip Google Calendar sync")
     ap.add_argument("--dry-run", action="store_true", help="do not write calendar, site data or plan")
     ap.add_argument("--today", help="override today's date (YYYY-MM-DD) for testing")
+    ap.add_argument("--start", help="start the plan on this date (YYYY-MM-DD) instead of the upcoming Monday; "
+                                    "the rest of that week is scheduled, then normal Monday weeks follow")
     ap.add_argument("--feel", choices=["good", "normal", "tired"],
                     help="how you feel this week; overrides the Apple Health recovery flag "
                          "(tired = lighter week, no hard intervals)")
     args = ap.parse_args()
     today = date.fromisoformat(args.today) if args.today else date.today()
+    start = date.fromisoformat(args.start) if args.start else None
+    if start and start < today:
+        sys.exit(f"--start {start} is in the past (today is {today})")
 
     with db.connect() as conn:
         # 1-2. Parse and store new data -------------------------------------
         step("Parsing Strava export")
-        strava_rows = load_strava()
+        file_ids, imported_until = db.import_state(conn)
+        strava_rows = load_strava(file_ids, imported_until)
         inserted = db.upsert_activities(conn, strava_rows)
         print(f"   {len(strava_rows)} activities in export, {inserted} new")
+        if inserted == 0:
+            print("   ! No new activities. If you trained since the last update, check that the new export's "
+                  "activities.csv or activities/ folder is in data/strava/ (see HOW_TO_UPDATE.md).")
 
         step("Parsing Apple Health export (streaming)")
         health_rows = load_apple_health()
@@ -77,11 +86,11 @@ def main():
 
         # 4. Evaluate last week, generate next --------------------------------
         step("Generating next week's plan")
-        monday = upcoming_monday(today)
+        monday, _ = plan_anchor(today, start)
         last_monday = monday - timedelta(days=7)
         last_plan_json = db.get_plan(conn, last_monday.isoformat())
         last_eval = evaluate_completion(json.loads(last_plan_json), activities) if last_plan_json else None
-        plan = generate_week(today, weekly, load, rec_status, zones, last_eval, activities)
+        plan = generate_week(today, weekly, load, rec_status, zones, last_eval, activities, start=start)
         if not args.dry_run:
             db.save_plan(conn, plan["week_start"], json.dumps(plan), datetime.now().isoformat())
             PLAN_OUTPUT_PATH.write_text(json.dumps(plan, indent=1, ensure_ascii=False), encoding="utf-8")
@@ -98,7 +107,7 @@ def main():
             except FileNotFoundError as e:
                 print(f"   Skipped: {e}")
             except Exception as e:  # keep the pipeline going even if Google is down
-                print(f"   Calendar sync failed: {e}")
+                print(f"   ! CALENDAR SYNC FAILED - Google Calendar still shows the old week: {e}")
 
         # 6. Site data ------------------------------------------------------------
         if not args.dry_run:

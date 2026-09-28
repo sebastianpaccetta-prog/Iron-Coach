@@ -116,6 +116,17 @@ def upcoming_monday(today):
     return today if today.weekday() == 0 else today + timedelta(days=7 - today.weekday())
 
 
+def plan_anchor(today, start=None):
+    """(monday, first_day) for the week to plan. Normally the upcoming Monday;
+    with an explicit `start` the plan begins that day and the week it belongs
+    to is planned from there (weeks stay Monday-keyed so the db, calendar and
+    completion scoring line up)."""
+    if start:
+        return week_start(start), start
+    monday = upcoming_monday(today)
+    return monday, monday
+
+
 def _zone_str(zones, sport, z):
     hz = zones.get(sport, {}).get("hr_zones")
     if not hz:
@@ -254,9 +265,8 @@ def _race_week_sessions():
     ]
 
 
-def build_timeline(today, baseline_hours, peak_hours):
-    """Project every week from the upcoming Monday to race day."""
-    monday = upcoming_monday(today)
+def build_timeline(monday, baseline_hours, peak_hours):
+    """Project every week from `monday` to race day."""
     level = max(MIN_WEEK_HOURS, baseline_hours)
     weeks, i = [], 0
     peak_level = level
@@ -286,21 +296,28 @@ def evaluate_completion(plan, activities):
     ws = date.fromisoformat(plan["week_start"])
     we = ws + timedelta(days=6)
     week_acts = [a for a in activities if ws.isoformat() <= a["date"] <= we.isoformat()]
-    used = set()
+    workouts = [w for w in plan["workouts"] if w["sport"] not in ("rest", "race")]
+
+    def gap(a, w):
+        return abs((date.fromisoformat(a["date"]) - date.fromisoformat(w["date"])).days)
+
+    # Pass 1 matches sessions done on the planned day or one day either side; pass 2
+    # lets the leftovers match a same-sport activity anywhere in the week (closest
+    # day first), so moving a session around the week still counts as doing it.
+    used, matches = set(), {}
+    for max_gap in (1, 6):
+        for i, w in enumerate(workouts):
+            if i in matches:
+                continue
+            for a in sorted(week_acts, key=lambda a: gap(a, w)):
+                if a["id"] not in used and a["sport"] == w["sport"] and gap(a, w) <= max_gap:
+                    matches[i] = a
+                    used.add(a["id"])
+                    break
+
     results = []
-    for w in plan["workouts"]:
-        if w["sport"] in ("rest", "race"):
-            continue
-        match = None
-        for a in sorted(week_acts, key=lambda a: a["date"] != w["date"]):
-            if a["id"] in used or a["sport"] != w["sport"]:
-                continue
-            if a["date"] != w["date"] and abs((date.fromisoformat(a["date"]) - date.fromisoformat(w["date"])).days) > 1:
-                continue
-            match = a
-            break
-        if match:
-            used.add(match["id"])
+    for i, w in enumerate(workouts):
+        match = matches.get(i)
         actual_min = (match["duration_s"] / 60) if match else 0
         results.append({**w, "completed": bool(match) and actual_min >= 0.6 * w["duration_min"],
                         "actual_min": round(actual_min), "actual_id": match["id"] if match else None})
@@ -335,9 +352,10 @@ def _goal_check(zones):
     return msg + " - within the sustainable 88-92% band."
 
 
-def generate_week(today, weekly, load, recovery_status, zones, last_week_eval, activities=None):
-    """Build the plan for the upcoming Monday-Sunday."""
-    monday = upcoming_monday(today)
+def generate_week(today, weekly, load, recovery_status, zones, last_week_eval, activities=None, start=None):
+    """Build the plan for the upcoming Monday-Sunday, or from `start` to that
+    week's Sunday when a start date is given."""
+    monday, first_day = plan_anchor(today, start)
     phase = phase_for(monday)
 
     # The current week only counts as "last week" once it is (nearly) over;
@@ -352,7 +370,7 @@ def generate_week(today, weekly, load, recovery_status, zones, last_week_eval, a
 
     ctl = load[-1]["ctl"] if load else None
     peak_hours = peak_week_hours(baseline, ctl)
-    timeline = build_timeline(today, max(baseline, last_hours), peak_hours)
+    timeline = build_timeline(monday, max(baseline, last_hours), peak_hours)
     this = timeline[0]
     is_recovery = this["is_recovery"]
     reasons = [f"Peak week set to {peak_hours:.1f} h (range {PEAK_WEEK_HOURS_RANGE[0]:.0f}-{PEAK_WEEK_HOURS_RANGE[1]:.0f} h) "
@@ -401,9 +419,15 @@ def generate_week(today, weekly, load, recovery_status, zones, last_week_eval, a
         reasons.append(f"Long run capped at {lr['minutes']} min = 110% of your longest run in the last 30 days ({longest:.0f} min); "
                        f"bigger single-session jumps raise injury risk ~1.6-2.3x.")
 
+    if first_day > monday:
+        reasons.append(f"Plan starts {first_day.strftime('%A %d %b')}: only the rest of this week is scheduled, "
+                       f"the first full Monday-Sunday week begins {(monday + timedelta(days=7)).strftime('%d %b')}.")
+
     workouts = []
     for s in sorted(sessions, key=lambda s: (s["weekday"], s["prio"] * -1)):
         d = monday + timedelta(days=s["weekday"])
+        if d < first_day:
+            continue
         title, intensity, desc = describe(s["sport"], s["role"], phase, s["minutes"], zones, is_recovery)
         workouts.append({
             "date": d.isoformat(), "weekday": d.strftime("%A"), "sport": s["sport"], "role": s["role"],
@@ -413,7 +437,7 @@ def generate_week(today, weekly, load, recovery_status, zones, last_week_eval, a
     scheduled_days = {w["date"] for w in workouts}
     for i in range(7):
         d = monday + timedelta(days=i)
-        if d.isoformat() not in scheduled_days and d < RACE_DATE:
+        if d >= first_day and d.isoformat() not in scheduled_days and d < RACE_DATE:
             workouts.append({"date": d.isoformat(), "weekday": d.strftime("%A"), "sport": "rest", "role": "rest",
                              "title": "Rest day", "duration_min": 0, "intensity": "-",
                              "description": "Full rest or 20 min gentle walk / mobility.", "emoji": SPORT_EMOJI["rest"]})
@@ -438,7 +462,7 @@ def generate_week(today, weekly, load, recovery_status, zones, last_week_eval, a
     }[phase]
     return {
         "week_start": monday.isoformat(), "week_end": (monday + timedelta(days=6)).isoformat(),
-        "phase": phase, "is_recovery": is_recovery, "weeks_to_race": this["weeks_to_race"],
+        "start_date": first_day.isoformat(), "phase": phase, "is_recovery": is_recovery, "weeks_to_race": this["weeks_to_race"],
         "target_hours": target, "planned_hours": round(sum(w["duration_min"] for w in workouts if w["sport"] != "race") / 60, 1),
         "focus": focus, "reasons": reasons, "workouts": workouts, "timeline": timeline,
     }

@@ -8,7 +8,7 @@ const STEPS = [
         <li>On a computer go to <b>strava.com</b> → profile picture (top right) → <b>Settings</b> → <b>My Account</b>.</li>
         <li>Under <i>Download or Delete Your Account</i> click <b>Get Started</b>, then step 2 <b>Request Your Archive</b>.</li>
         <li>Strava emails a download link (minutes to a few hours). Download the zip and <b>unzip it</b>.</li>
-        <li>The unzipped folder has <code>activities.csv</code> at the top level. That is the only file the coach reads.</li>
+        <li>The unzipped folder has <code>activities.csv</code> at the top level. That is the main file the coach reads; if it is missing, the raw workout files in the <code>activities/</code> folder are used instead.</li>
       </ol>
     ),
   },
@@ -35,6 +35,7 @@ const STEPS = [
       <>
         <pre>{`Iron Coach/
   data/strava/activities.csv                   ← Strava (what you have now)
+  data/strava/activities/                      ← or just the export's raw files folder
   strava_export_2026-09-28/activities.csv      ← or a dated folder at the top level
   data/apple_health/export.xml                 ← Apple Health
   apple_health_export_2026-09-28/export.xml    ← or a dated folder at the top level`}</pre>
@@ -79,7 +80,8 @@ const CHECKLIST = [
 ];
 
 const TROUBLE = [
-  { q: "0 new activities", a: "The export is older than what's already in the database, or an old folder was picked. Check the “reading …” line and delete stale export folders." },
+  { q: "0 new activities", a: "Neither activities.csv nor the activities/ folder of the new export is in the project, the export is older than what's already in the database, or an old folder was picked. Check the “reading …” line and delete stale export folders." },
+  { q: "A session shows as missed", a: "It needs the same sport in the same Monday–Sunday week and at least 60% of the planned minutes. Doing it on a different day still counts." },
   { q: "No HRV line in the summary", a: "Apple Health export missing or older than 7 days. Use --feel." },
   { q: "Push rejected (email privacy)", a: "Run once: git config user.email \"sebastianpaccetta-prog@users.noreply.github.com\"" },
   { q: "Site didn't update", a: "git status should say “up to date with origin/main”; otherwise git push. Then hard-refresh." },

@@ -16,6 +16,7 @@ SCOPES = ["https://www.googleapis.com/auth/calendar"]
 
 
 def _service():
+    from google.auth.exceptions import RefreshError
     from google.auth.transport.requests import Request
     from google.oauth2.credentials import Credentials
     from google_auth_oauthlib.flow import InstalledAppFlow
@@ -28,13 +29,20 @@ def _service():
     creds = None
     if GOOGLE_TOKEN_PATH.exists():
         creds = Credentials.from_authorized_user_file(str(GOOGLE_TOKEN_PATH), SCOPES)
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
+    if creds and creds.valid:
+        return build("calendar", "v3", credentials=creds, cache_discovery=False)
+    if creds and creds.expired and creds.refresh_token:
+        try:
             creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(str(GOOGLE_CREDENTIALS_PATH), SCOPES)
-            creds = flow.run_local_server(port=0)
-        GOOGLE_TOKEN_PATH.write_text(creds.to_json(), encoding="utf-8")
+        except RefreshError:
+            # Google expires refresh tokens after 7 days while the OAuth app is in
+            # "Testing" mode (see README); fall back to a fresh browser consent.
+            print("   Google sign-in expired - opening the browser to sign in again")
+            creds = None
+    if not creds or not creds.valid:
+        flow = InstalledAppFlow.from_client_secrets_file(str(GOOGLE_CREDENTIALS_PATH), SCOPES)
+        creds = flow.run_local_server(port=0)
+    GOOGLE_TOKEN_PATH.write_text(creds.to_json(), encoding="utf-8")
     return build("calendar", "v3", credentials=creds, cache_discovery=False)
 
 
