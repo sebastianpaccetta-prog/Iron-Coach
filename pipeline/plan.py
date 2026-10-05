@@ -296,7 +296,9 @@ def evaluate_completion(plan, activities):
     ws = date.fromisoformat(plan["week_start"])
     we = ws + timedelta(days=6)
     week_acts = [a for a in activities if ws.isoformat() <= a["date"] <= we.isoformat()]
-    workouts = [w for w in plan["workouts"] if w["sport"] not in ("rest", "race")]
+    # Strength isn't recorded on Strava, so it stays on the calendar but is left
+    # out of the session count and planned hours.
+    workouts = [w for w in plan["workouts"] if w["sport"] not in ("rest", "race", "strength")]
 
     def gap(a, w):
         return abs((date.fromisoformat(a["date"]) - date.fromisoformat(w["date"])).days)

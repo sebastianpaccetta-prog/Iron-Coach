@@ -11,7 +11,7 @@ export default function ThisWeek() {
         return e ? { ...w, completed: e.completed, actual_min: e.actual_min } : w;
       })
     : wk.workouts;
-  const planned = workouts.filter((w) => w.sport !== "rest" && w.sport !== "race");
+  const planned = workouts.filter((w) => !["rest", "race", "strength"].includes(w.sport));
   const done = planned.filter((w) => w.completed).length;
   const lw = data.last_week;
   const recFlag = data.recovery_status.flag;
