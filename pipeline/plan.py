@@ -54,6 +54,10 @@ SPORT_SPLIT = {
     "race":  {"swim": 0.25, "bike": 0.40, "run": 0.35, "strength": 0.00},
 }
 
+# Friday is always a full rest day, before the weekend long sessions. The easy run
+# doubles up with Thursday's swim instead.
+REST_WEEKDAY = 4
+
 # Weekly template: (weekday 0=Mon, sport, role, share of that sport's weekly minutes, priority)
 # Lower priority number = dropped first when there aren't enough hours.
 WEEK_TEMPLATE = [
@@ -62,7 +66,7 @@ WEEK_TEMPLATE = [
     (1, "run", "quality", 0.30, 4),
     (2, "bike", "quality", 0.35, 4),
     (3, "swim", "endurance", 0.55, 5),
-    (4, "run", "easy", 0.20, 1),
+    (3, "run", "easy", 0.20, 1),
     (5, "bike", "long", 0.65, 6),
     (5, "run", "brick", 0.10, 2),
     (6, "run", "long", 0.40, 6),
@@ -260,7 +264,7 @@ def _race_week_sessions():
         {"weekday": 0, "sport": "swim", "role": "endurance", "minutes": 30, "prio": 9},
         {"weekday": 1, "sport": "bike", "role": "quality", "minutes": 40, "prio": 9},
         {"weekday": 2, "sport": "run", "role": "quality", "minutes": 25, "prio": 9},
-        {"weekday": 4, "sport": "swim", "role": "endurance", "minutes": 20, "prio": 9},
+        {"weekday": 3, "sport": "swim", "role": "endurance", "minutes": 20, "prio": 9},
         {"weekday": 5, "sport": "bike", "role": "quality", "minutes": 20, "prio": 9},
     ]
 
@@ -425,6 +429,7 @@ def generate_week(today, weekly, load, recovery_status, zones, last_week_eval, a
         reasons.append(f"Plan starts {first_day.strftime('%A %d %b')}: only the rest of this week is scheduled, "
                        f"the first full Monday-Sunday week begins {(monday + timedelta(days=7)).strftime('%d %b')}.")
 
+    assert all(s["weekday"] != REST_WEEKDAY for s in sessions), "session scheduled on the rest day"
     workouts = []
     for s in sorted(sessions, key=lambda s: (s["weekday"], s["prio"] * -1)):
         d = monday + timedelta(days=s["weekday"])
