@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-05T16:25:20",
+ "generated_at": "2026-10-05T16:29:46",
  "athlete": "Sebastian",
  "units": {
   "dist": "mi",
@@ -192,8 +192,8 @@
     "emoji": "🏊"
    },
    {
-    "date": "2026-10-09",
-    "weekday": "Friday",
+    "date": "2026-10-08",
+    "weekday": "Thursday",
     "sport": "run",
     "role": "easy",
     "title": "Easy run",
@@ -201,6 +201,17 @@
     "intensity": "Z1 (0-146 bpm)-Z2 (146-153 bpm), ~10:12-9:16/mi",
     "description": "Recovery jog. Keep it genuinely easy - if in doubt, slow down. Optional 4x20s strides at the end.",
     "emoji": "🏃"
+   },
+   {
+    "date": "2026-10-09",
+    "weekday": "Friday",
+    "sport": "rest",
+    "role": "rest",
+    "title": "Rest day",
+    "duration_min": 0,
+    "intensity": "-",
+    "description": "Full rest or 20 min gentle walk / mobility.",
+    "emoji": "😴"
    },
    {
     "date": "2026-10-10",
@@ -293,8 +304,8 @@
      "actual_id": null
     },
     {
-     "date": "2026-10-09",
-     "weekday": "Friday",
+     "date": "2026-10-08",
+     "weekday": "Thursday",
      "sport": "run",
      "role": "easy",
      "title": "Easy run",
