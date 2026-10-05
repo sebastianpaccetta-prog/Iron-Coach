@@ -11,7 +11,8 @@
  "reasons": [
   "Peak week set to 11.0 h (range 11-14 h) from your recent 5.2 h/wk and CTL 40.",
   "Goal 5.00 h needs ~7:47/mi off the bike; that is 104% of your current threshold speed (8:04/mi) - threshold needs to come down before this is realistic.",
-  "Base phase (cap 7.7 h/wk). Last week you did 4.9 h, so this week ramps to at most +10%."
+  "Base phase (cap 7.7 h/wk). Last week you did 4.9 h, so this week ramps to at most +10%.",
+  "Recovery metrics look good (HRV 72 ms is above your normal band (53-69 ms); Resting HR below baseline)."
  ],
  "workouts": [
   {

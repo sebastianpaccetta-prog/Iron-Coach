@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-05T16:29:46",
+ "generated_at": "2026-10-05T16:33:45",
  "athlete": "Sebastian",
  "units": {
   "dist": "mi",
@@ -13,7 +13,7 @@
  "zones": {
   "max_hr": 196,
   "max_hr_source": "199 bpm on 2022-02-28, aged to today",
-  "resting_hr": null,
+  "resting_hr": 55.4,
   "run": {
    "lthr": 172,
    "lthr_source": "estimated from 88% of max HR 196; best 20 min in 18 months was 166 bpm on 2026-01-11 - do a 30-min test to pin it down",
@@ -133,7 +133,8 @@
   "reasons": [
    "Peak week set to 11.0 h (range 11-14 h) from your recent 5.2 h/wk and CTL 40.",
    "Goal 5.00 h needs ~7:47/mi off the bike; that is 104% of your current threshold speed (8:04/mi) - threshold needs to come down before this is realistic.",
-   "Base phase (cap 7.7 h/wk). Last week you did 4.9 h, so this week ramps to at most +10%."
+   "Base phase (cap 7.7 h/wk). Last week you did 4.9 h, so this week ramps to at most +10%.",
+   "Recovery metrics look good (HRV 72 ms is above your normal band (53-69 ms); Resting HR below baseline)."
   ],
   "workouts": [
    {
@@ -2691,18 +2692,19 @@
   },
   {
    "date": "2026-06-27",
-   "hrv": 93.4791,
-   "resting_hr": 56.5
+   "hrv": 84.36380000000001,
+   "resting_hr": 55.0
   },
   {
    "date": "2026-06-28",
-   "hrv": 101.72266666666667,
+   "hrv": 134.70566666666667,
+   "resting_hr": 58.0,
    "sleep_hours": 7.0,
    "vo2max": 64.05
   },
   {
    "date": "2026-06-29",
-   "hrv": 104.0284,
+   "hrv": 87.59792,
    "resting_hr": 58.0
   },
   {
@@ -2730,24 +2732,26 @@
   },
   {
    "date": "2026-07-04",
-   "hrv": 54.7949,
-   "resting_hr": 62.0,
+   "hrv": 50.249766666666666,
+   "resting_hr": 64.0,
    "vo2max": 63.5
   },
   {
    "date": "2026-07-05",
-   "hrv": 68.32948,
+   "hrv": 68.34628333333333,
+   "resting_hr": 60.0,
    "sleep_hours": 5.64
   },
   {
    "date": "2026-07-06",
-   "hrv": 111.48632,
-   "resting_hr": 52.0,
+   "hrv": 117.902575,
+   "resting_hr": 53.0,
    "vo2max": 64.97
   },
   {
    "date": "2026-07-07",
-   "hrv": 79.832075,
+   "hrv": 81.02991999999999,
+   "resting_hr": 51.0,
    "sleep_hours": 7.06
   },
   {
@@ -2788,44 +2792,51 @@
   },
   {
    "date": "2026-07-17",
-   "hrv": 77.95592,
+   "hrv": 83.48005,
    "resting_hr": 54.0
+  },
+  {
+   "date": "2026-07-18",
+   "hrv": 55.8594
   },
   {
    "date": "2026-07-19",
-   "hrv": 67.937825,
-   "resting_hr": 54.0
+   "hrv": 76.59053333333334,
+   "resting_hr": 57.0
   },
   {
    "date": "2026-07-20",
-   "hrv": 97.91199999999999,
+   "hrv": 83.928925,
+   "resting_hr": 51.0,
    "sleep_hours": 7.7
   },
   {
    "date": "2026-07-21",
-   "hrv": 82.32851666666667,
-   "resting_hr": 51.5
+   "hrv": 62.29022,
+   "resting_hr": 51.0
   },
   {
    "date": "2026-07-22",
-   "hrv": 87.18062,
-   "resting_hr": 57.0
+   "hrv": 103.07051666666666,
+   "resting_hr": 52.0
   },
   {
    "date": "2026-07-23",
-   "hrv": 66.80652,
-   "resting_hr": 59.0,
+   "hrv": 75.13506666666667,
+   "resting_hr": 57.0,
    "vo2max": 61.22
   },
   {
    "date": "2026-07-24",
-   "hrv": 52.668240000000004,
-   "resting_hr": 53.0,
-   "sleep_hours": 6.12
+   "hrv": 48.053200000000004,
+   "resting_hr": 59.0,
+   "sleep_hours": 6.12,
+   "vo2max": 61.22
   },
   {
    "date": "2026-07-25",
-   "hrv": 92.917525,
+   "hrv": 83.89545,
+   "resting_hr": 53.0,
    "sleep_hours": 8.75
   },
   {
@@ -2853,19 +2864,24 @@
   },
   {
    "date": "2026-07-30",
-   "hrv": 92.81027499999999,
+   "hrv": 102.15929999999999,
    "resting_hr": 58.0
   },
   {
    "date": "2026-07-31",
-   "hrv": 72.05712,
-   "resting_hr": 57.5,
+   "hrv": 70.84146666666666,
+   "resting_hr": 60.0,
    "vo2max": 58.2
   },
   {
    "date": "2026-08-01",
    "hrv": 70.7863,
-   "vo2max": 58.575
+   "resting_hr": 55.0,
+   "vo2max": 58.99
+  },
+  {
+   "date": "2026-08-02",
+   "vo2max": 58.16
   },
   {
    "date": "2026-08-03",
@@ -2887,17 +2903,18 @@
   {
    "date": "2026-08-06",
    "hrv": 57.98836666666667,
-   "resting_hr": 63.0
+   "resting_hr": 60.0
   },
   {
    "date": "2026-08-07",
-   "hrv": 42.326233333333334,
-   "resting_hr": 62.0,
+   "hrv": 44.049040000000005,
+   "resting_hr": 66.0,
    "vo2max": 58.68000000000001
   },
   {
    "date": "2026-08-08",
-   "hrv": 57.401,
+   "hrv": 45.5566,
+   "resting_hr": 62.0,
    "sleep_hours": 6.1
   },
   {
@@ -2921,7 +2938,7 @@
   },
   {
    "date": "2026-08-14",
-   "hrv": 59.164175,
+   "hrv": 63.93822,
    "resting_hr": 59.0,
    "sleep_hours": 6.01
   },
@@ -2955,12 +2972,13 @@
   },
   {
    "date": "2026-08-20",
-   "hrv": 41.78228,
-   "resting_hr": 61.5
+   "hrv": 43.199466666666666,
+   "resting_hr": 65.0
   },
   {
    "date": "2026-08-21",
-   "hrv": 112.56105,
+   "hrv": 76.108775,
+   "resting_hr": 58.0,
    "sleep_hours": 4.22,
    "vo2max": 59.42
   },
@@ -3006,21 +3024,23 @@
   {
    "date": "2026-09-04",
    "hrv": 47.9123,
-   "resting_hr": 64.0
+   "resting_hr": 59.0
   },
   {
    "date": "2026-09-05",
    "hrv": 40.2639,
+   "resting_hr": 69.0,
    "sleep_hours": 6.55
   },
   {
    "date": "2026-09-09",
    "hrv": 64.9146,
-   "resting_hr": 53.5
+   "resting_hr": 51.0
   },
   {
    "date": "2026-09-10",
    "hrv": 69.708725,
+   "resting_hr": 56.0,
    "vo2max": 59.065
   },
   {
@@ -3030,21 +3050,123 @@
   },
   {
    "date": "2026-09-15",
-   "hrv": 56.6809,
+   "hrv": 61.070049999999995,
    "resting_hr": 54.0
+  },
+  {
+   "date": "2026-09-17",
+   "hrv": 36.5006,
+   "resting_hr": 67.0
+  },
+  {
+   "date": "2026-09-18",
+   "hrv": 46.76225,
+   "resting_hr": 57.0
+  },
+  {
+   "date": "2026-09-19",
+   "hrv": 86.7143,
+   "resting_hr": 56.0
+  },
+  {
+   "date": "2026-09-20",
+   "hrv": 83.10725000000001,
+   "resting_hr": 54.0,
+   "vo2max": 57.93
+  },
+  {
+   "date": "2026-09-21",
+   "hrv": 55.18346666666667,
+   "resting_hr": 58.0
+  },
+  {
+   "date": "2026-09-22",
+   "hrv": 65.48434,
+   "resting_hr": 55.0
+  },
+  {
+   "date": "2026-09-23",
+   "hrv": 54.723479999999995,
+   "resting_hr": 56.0,
+   "vo2max": 56.43
+  },
+  {
+   "date": "2026-09-24",
+   "hrv": 57.461324999999995,
+   "resting_hr": 61.0,
+   "vo2max": 55.2
+  },
+  {
+   "date": "2026-09-25",
+   "hrv": 70.95822,
+   "resting_hr": 59.0,
+   "vo2max": 54.94
+  },
+  {
+   "date": "2026-09-26",
+   "hrv": 55.17316666666667,
+   "resting_hr": 59.0
+  },
+  {
+   "date": "2026-09-27",
+   "hrv": 36.49375,
+   "resting_hr": 62.0
+  },
+  {
+   "date": "2026-09-28",
+   "hrv": 70.49105,
+   "resting_hr": 57.0,
+   "vo2max": 55.74
+  },
+  {
+   "date": "2026-09-29",
+   "hrv": 68.379775,
+   "resting_hr": 57.0
+  },
+  {
+   "date": "2026-09-30",
+   "hrv": 75.86053333333334,
+   "resting_hr": 54.0,
+   "vo2max": 56.65
+  },
+  {
+   "date": "2026-10-01",
+   "hrv": 47.7661,
+   "resting_hr": 63.0
+  },
+  {
+   "date": "2026-10-02",
+   "hrv": 62.78525,
+   "resting_hr": 53.0,
+   "vo2max": 55.89
+  },
+  {
+   "date": "2026-10-03",
+   "vo2max": 57.69
+  },
+  {
+   "date": "2026-10-04",
+   "hrv": 108.46065000000002,
+   "resting_hr": 51.0
+  },
+  {
+   "date": "2026-10-05",
+   "hrv": 73.5199,
+   "resting_hr": 53.0
   }
  ],
  "recovery_status": {
-  "flag": "normal",
+  "flag": "good",
   "reasons": [
-   "No strong recovery signal either way"
+   "HRV 72 ms is above your normal band (53-69 ms)",
+   "Resting HR below baseline"
   ],
-  "hrv_7d": null,
-  "hrv_42d": 61.9,
-  "resting_hr_7d": null,
-  "resting_hr_42d": 58.0,
+  "hrv_7d": 72.5,
+  "hrv_42d": 61.1,
+  "resting_hr_7d": 55.4,
+  "resting_hr_42d": 58.3,
   "sleep_7d": null,
-  "vo2max": 60.4
+  "vo2max": 57.7
  },
  "fitness": {
   "ctl": 40.3,
