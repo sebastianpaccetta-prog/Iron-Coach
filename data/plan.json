@@ -1,33 +1,33 @@
 {
- "week_start": "2026-09-28",
- "week_end": "2026-10-04",
- "start_date": "2026-09-28",
+ "week_start": "2026-10-05",
+ "week_end": "2026-10-11",
+ "start_date": "2026-10-05",
  "phase": "base",
  "is_recovery": false,
- "weeks_to_race": 18,
- "target_hours": 3.6,
- "planned_hours": 3.8,
+ "weeks_to_race": 17,
+ "target_hours": 4.9,
+ "planned_hours": 5.1,
  "focus": "Pyramidal: mostly Z1-Z2 with one tempo session per sport; build swim consistency and heavy strength.",
  "reasons": [
-  "Peak week set to 11.0 h (range 11-14 h) from your recent 2.7 h/wk and CTL 23.",
-  "Goal 5.00 h needs ~7:47/mi off the bike; that is 104% of your current threshold speed (8:05/mi) - threshold needs to come down before this is realistic.",
-  "Base phase (cap 7.7 h/wk). Last week you did 3.6 h, so this week ramps to at most +10%.",
-  "Form (TSB) is -27: you are carrying a lot of fatigue, so 10% is shaved off."
+  "Peak week set to 11.0 h (range 11-14 h) from your recent 5.2 h/wk and CTL 40.",
+  "Goal 5.00 h needs ~7:47/mi off the bike; that is 104% of your current threshold speed (8:04/mi) - threshold needs to come down before this is realistic.",
+  "Base phase (cap 7.7 h/wk). Last week you did 4.9 h, so this week ramps to at most +10%.",
+  "Only 50% of last week's sessions were completed, so volume is held rather than increased."
  ],
  "workouts": [
   {
-   "date": "2026-09-28",
+   "date": "2026-10-05",
    "weekday": "Monday",
    "sport": "swim",
    "role": "technique",
    "title": "Swim: technique + short intervals",
-   "duration_min": 30,
+   "duration_min": 35,
    "intensity": "Z2-Z3 (RPE 4-6)",
-   "description": "WU 200 easy + 4x50 drill/swim. Main: 8-12x50 focus on catch & body position, 15s rest. Then 4x100 steady, 20s rest. CD 100. ~30 min total.",
+   "description": "WU 200 easy + 4x50 drill/swim. Main: 8-12x50 focus on catch & body position, 15s rest. Then 4x100 steady, 20s rest. CD 100. ~35 min total.",
    "emoji": "🏊"
   },
   {
-   "date": "2026-09-28",
+   "date": "2026-10-05",
    "weekday": "Monday",
    "sport": "strength",
    "role": "strength",
@@ -38,40 +38,40 @@
    "emoji": "💪"
   },
   {
-   "date": "2026-09-29",
+   "date": "2026-10-06",
    "weekday": "Tuesday",
    "sport": "run",
    "role": "quality",
    "title": "Tempo run",
-   "duration_min": 30,
-   "intensity": "Z3 (140-146 bpm), ~9:17-8:35/mi",
+   "duration_min": 40,
+   "intensity": "Z3 (155-162 bpm), ~9:16-8:35/mi",
    "description": "WU 15 min easy. 2x10 min at Z3 with 3 min jog between. CD 10 min. Add 4x20s strides.",
    "emoji": "🏃"
   },
   {
-   "date": "2026-09-30",
+   "date": "2026-10-07",
    "weekday": "Wednesday",
-   "sport": "rest",
-   "role": "rest",
-   "title": "Rest day",
-   "duration_min": 0,
-   "intensity": "-",
-   "description": "Full rest or 20 min gentle walk / mobility.",
-   "emoji": "😴"
+   "sport": "bike",
+   "role": "quality",
+   "title": "Cadence + tempo",
+   "duration_min": 45,
+   "intensity": "Z3 (150-155 bpm)",
+   "description": "WU 15 min. 3x10 min at low Z3, 90-95 rpm, 5 min easy between. CD 10 min.",
+   "emoji": "🚴"
   },
   {
-   "date": "2026-10-01",
+   "date": "2026-10-08",
    "weekday": "Thursday",
    "sport": "swim",
    "role": "endurance",
    "title": "Swim: endurance",
-   "duration_min": 30,
+   "duration_min": 40,
    "intensity": "Z2 (RPE 4-5)",
-   "description": "WU 300 easy. Main: 4x200 steady, 30s rest. Practice sighting every 6-8 strokes on one set. CD 200. ~30 min.",
+   "description": "WU 300 easy. Main: 4x200 steady, 30s rest. Practice sighting every 6-8 strokes on one set. CD 200. ~40 min.",
    "emoji": "🏊"
   },
   {
-   "date": "2026-10-02",
+   "date": "2026-10-09",
    "weekday": "Friday",
    "sport": "rest",
    "role": "rest",
@@ -82,97 +82,90 @@
    "emoji": "😴"
   },
   {
-   "date": "2026-10-03",
+   "date": "2026-10-10",
    "weekday": "Saturday",
    "sport": "bike",
    "role": "long",
    "title": "Long ride",
-   "duration_min": 75,
-   "intensity": "Z2 (117-123 bpm)",
-   "description": "Steady aerobic ride, mostly Z2 (117-123 bpm). Fuel 90 g carbs/h (2:1 glucose:fructose); on long rides in build/peak practise up to 120 g/h to train the gut. Drink to thirst.",
+   "duration_min": 65,
+   "intensity": "Z2 (135-149 bpm)",
+   "description": "Steady aerobic ride, mostly Z2 (135-149 bpm). Fuel 90 g carbs/h (2:1 glucose:fructose); on long rides in build/peak practise up to 120 g/h to train the gut. Drink to thirst.",
    "emoji": "🚴"
   },
   {
-   "date": "2026-10-04",
+   "date": "2026-10-11",
    "weekday": "Sunday",
    "sport": "run",
    "role": "long",
    "title": "Long run",
-   "duration_min": 35,
-   "intensity": "Z2 (132-138 bpm), ~10:13-9:17/mi",
+   "duration_min": 50,
+   "intensity": "Z2 (146-153 bpm), ~10:12-9:16/mi",
    "description": "Easy, conversational. Walk breaks are fine early in the plan. Fuel every 30-40 min.",
    "emoji": "🏃"
   }
  ],
  "timeline": [
   {
-   "week_start": "2026-09-28",
-   "phase": "base",
-   "is_recovery": false,
-   "target_hours": 3.9,
-   "weeks_to_race": 18
-  },
-  {
    "week_start": "2026-10-05",
    "phase": "base",
    "is_recovery": false,
-   "target_hours": 4.3,
+   "target_hours": 5.7,
    "weeks_to_race": 17
   },
   {
    "week_start": "2026-10-12",
    "phase": "base",
    "is_recovery": false,
-   "target_hours": 4.8,
+   "target_hours": 6.2,
    "weeks_to_race": 16
   },
   {
    "week_start": "2026-10-19",
    "phase": "build",
-   "is_recovery": true,
-   "target_hours": 3.4,
+   "is_recovery": false,
+   "target_hours": 6.9,
    "weeks_to_race": 15
   },
   {
    "week_start": "2026-10-26",
    "phase": "build",
-   "is_recovery": false,
-   "target_hours": 5.8,
+   "is_recovery": true,
+   "target_hours": 4.9,
    "weeks_to_race": 14
   },
   {
    "week_start": "2026-11-02",
    "phase": "build",
    "is_recovery": false,
-   "target_hours": 6.4,
+   "target_hours": 8.3,
    "weeks_to_race": 13
   },
   {
    "week_start": "2026-11-09",
    "phase": "build",
    "is_recovery": false,
-   "target_hours": 7.0,
+   "target_hours": 9.1,
    "weeks_to_race": 12
   },
   {
    "week_start": "2026-11-16",
    "phase": "build",
-   "is_recovery": true,
-   "target_hours": 5.0,
+   "is_recovery": false,
+   "target_hours": 9.9,
    "weeks_to_race": 11
   },
   {
    "week_start": "2026-11-23",
    "phase": "build",
-   "is_recovery": false,
-   "target_hours": 8.5,
+   "is_recovery": true,
+   "target_hours": 6.4,
    "weeks_to_race": 10
   },
   {
    "week_start": "2026-11-30",
    "phase": "build",
    "is_recovery": false,
-   "target_hours": 9.3,
+   "target_hours": 9.9,
    "weeks_to_race": 9
   },
   {
@@ -185,15 +178,15 @@
   {
    "week_start": "2026-12-14",
    "phase": "peak",
-   "is_recovery": true,
-   "target_hours": 7.1,
+   "is_recovery": false,
+   "target_hours": 10.9,
    "weeks_to_race": 7
   },
   {
    "week_start": "2026-12-21",
    "phase": "peak",
-   "is_recovery": false,
-   "target_hours": 11.0,
+   "is_recovery": true,
+   "target_hours": 7.2,
    "weeks_to_race": 6
   },
   {
@@ -213,8 +206,8 @@
   {
    "week_start": "2027-01-11",
    "phase": "peak",
-   "is_recovery": true,
-   "target_hours": 7.2,
+   "is_recovery": false,
+   "target_hours": 11.0,
    "weeks_to_race": 3
   },
   {
