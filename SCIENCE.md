@@ -25,6 +25,10 @@ rule is convention rather than evidence, it says so.
 | Every 4th week a deload at 65% | `RECOVERY_EVERY_N_WEEKS` | Near-universal coaching practice; no trial isolates the exact ratio. |
 | Peak week 11-14 h chosen from fitness | `peak_week_hours` | 11-14 h is the typical range for sub-5 age-groupers. The mapping from recent hours / CTL to a point in that range is a heuristic, not a finding. |
 | Sport split by phase, session minimums, day template | `SPORT_SPLIT`, `WEEK_TEMPLATE` | Coaching judgment. Bike-heavy because the bike is ~52% of a 70.3 by time. |
+| HR zones from heart rate reserve, % of max HR without resting HR | `hr_zones` | McMillan's ranking: age formulas are off by 10-30 bpm for an individual; HRR (Karvonen) with resting HR is more personalised. The 50/60/70/80/90% bands are the common 5-zone split. |
+| Max HR fallback 220 - age | `estimate_max_hr` | Fox/Haskell formula, used only with no recorded HR. Off by 10-30 bpm for any individual, so recorded history or a max HR test always wins. |
+| LTHR (for training load only) = best 20-min HR in a 30+ min effort (last 18 months), floor 88% of max HR; tested value overrides | `estimate_lthr` | Friel's field test: the last 20 min of a 30-min solo all-out effort approximates LTHR; training runs can only under-estimate it, so the best effort is used rather than an average. LTHR sits at ~85-92% of HRmax in trained runners (92 ± 2.5% in 15 trained runners at a fixed lactate threshold, 2023); 88% is a middle value. A lab or field test beats both. |
+| Max HR aged 0.7 bpm/year | `estimate_max_hr` | Tanaka et al. 2001 (HRmax = 208 - 0.7 x age); pre-2020, used only to age old readings. |
 | Goal-pace sanity check: run goal pace should be <=92% of threshold speed | `_goal_check` | Rule of thumb from 70.3 pacing data; a 70.3 run is typically held at ~88-92% of threshold. |
 
 ## Goal: sub-5 h 70.3
@@ -52,3 +56,8 @@ min/km, km/h, km). Swim pace is always per 100 m.
 * Podlogar T, Wallis GA (2022). New horizons in carbohydrate research and application for endurance athletes. *Sports Med* 52(Suppl 1):5-23. https://www.gssiweb.org/sports-science-exchange/article/dietary-carbohydrate-and-the-endurance-athlete-contemporary-perspectives
 * Impellizzeri FM et al. (2020). Acute:chronic workload ratio: conceptual issues and fundamental pitfalls. *Int J Sports Physiol Perform* 15(6):907-13. https://pubmed.ncbi.nlm.nih.gov/32502973/
 * Systematic review of running injuries and training parameters (2022, 36 studies). https://pmc.ncbi.nlm.nih.gov/articles/PMC9528699/
+* Friel J. Determining your LTHR (30-min field test). https://joefrieltraining.com/determining-your-lthr/ and zone bands: https://www.trainingpeaks.com/learn/articles/joe-friel-s-quick-guide-to-setting-zones/
+* From incremental test to continuous running at fixed lactate thresholds: individual responses on %VO2max, %HRmax (2023). https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10611166/
+* McMillan G. How to calculate heart rate zones (age-based, LTHR, heart rate reserve). https://www.mcmillanrunning.com/
+* Karvonen MJ, Kentala E, Mustala O (1957). The effects of training on heart rate; a longitudinal study. *Ann Med Exp Biol Fenn* 35(3):307-15.
+* Tanaka H, Monahan KD, Seals DR (2001). Age-predicted maximal heart rate revisited. *J Am Coll Cardiol* 37(1):153-6.

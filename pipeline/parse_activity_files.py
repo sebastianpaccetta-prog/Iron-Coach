@@ -72,16 +72,22 @@ def _row(path, start_utc, raw_type, name, moving_s, elapsed_s, distance_m, eleva
 
 # --- FIT ---------------------------------------------------------------------
 
-def _fit_session(data):
-    """Return {field_number: raw_value} of the first session message (global 18)."""
+def _fit_messages(data, wanted):
+    """Yield (global_num, {field_number: raw_value}) for data messages whose global
+    number is in `wanted`. Compressed-timestamp records get field 253 filled in."""
     header_size = data[0]
     end = header_size + struct.unpack("<I", data[4:8])[0]
-    defs, i = {}, header_size
+    defs, i, last_ts = {}, header_size, None
     while i < end:
         h = data[i]
         i += 1
+        ts = None
         if h & 0x80:                      # compressed-timestamp data record
             local = (h >> 5) & 0x3
+            if last_ts is not None:
+                ts = (last_ts & ~0x1F) + (h & 0x1F)
+                if ts < last_ts:
+                    ts += 0x20
         elif h & 0x40:                    # definition record
             local = h & 0xF
             arch = "<" if data[i + 1] == 0 else ">"
@@ -101,20 +107,32 @@ def _fit_session(data):
         else:
             local = h & 0xF
         global_num, arch, fields, dev_size = defs[local]
-        if global_num != 18:
-            i += sum(size for _, size in fields) + dev_size
-            continue
         rec = {}
         for num, size in fields:
             raw = data[i:i + size]
             i += size
             fmt = {1: "B", 2: "H", 4: "I"}.get(size)
-            if fmt:
+            if fmt and (global_num in wanted or num == 253):
                 v = struct.unpack(arch + fmt, raw)[0]
                 if v != (1 << (8 * size)) - 1:   # all bits set = invalid
                     rec[num] = v
-        return rec
-    return None
+        i += dev_size
+        if ts is not None:
+            rec.setdefault(253, ts)
+        if 253 in rec:
+            last_ts = rec[253]
+        if global_num in wanted:
+            yield global_num, rec
+
+
+def _fit_session(data):
+    """Return {field_number: raw_value} of the first session message (global 18)."""
+    return next((rec for _, rec in _fit_messages(data, {18})), None)
+
+
+def _fit_hr_stream(data):
+    """[(seconds, bpm)] from record messages (global 20: 253 timestamp, 3 heart_rate)."""
+    return [(rec[253], rec[3]) for _, rec in _fit_messages(data, {20}) if 253 in rec and 3 in rec]
 
 
 def parse_fit(path):
@@ -264,3 +282,63 @@ def parse_activity_file(path):
     except Exception as e:  # one corrupt file should not stop the weekly run
         print(f"   ! could not read {path.name}: {e}")
     return None
+
+
+# --- Heart-rate streams -----------------------------------------------------------
+
+HR_GAP_S = 30               # a gap longer than this breaks a window (a stop lets HR fall)
+HR_PLAUSIBLE = (35, 230)    # samples outside this are sensor dropouts or spikes
+
+
+def _text_hr_stream(root):
+    """[(seconds, bpm)] from GPX trkpt/hr or TCX Trackpoint/HeartRateBpm/Value."""
+    out = []
+    for el in root.iter():
+        if _local(el.tag) not in ("trkpt", "Trackpoint"):
+            continue
+        t = hr = None
+        for c in el.iter():
+            ct = _local(c.tag)
+            if ct in ("time", "Time") and c.text:
+                t = _time(c.text)
+            elif ct in ("hr", "Value") and c.text:
+                hr = float(c.text)
+        if t and hr:
+            out.append((t.timestamp(), hr))
+    return out
+
+
+def hr_stream(path):
+    """Per-sample heart rate [(seconds, bpm)] from a raw activity file, or [] if it has none."""
+    n = path.name.lower()
+    try:
+        data = _read(path)
+        s = _fit_hr_stream(data) if ".fit" in n else _text_hr_stream(ET.fromstring(data))
+    except Exception as e:
+        print(f"   ! could not read HR from {path.name}: {e}")
+        return []
+    return [(t, hr) for t, hr in s if HR_PLAUSIBLE[0] <= hr <= HR_PLAUSIBLE[1]]
+
+
+def best_hr_window(samples, secs):
+    """Highest mean HR over any unbroken `secs`-second stretch (samples held until the
+    next one, resampled to 1 Hz). None if no stretch is that long."""
+    series = []
+    for (t1, h1), (t2, _) in zip(samples, samples[1:]):
+        dt = int(t2 - t1)
+        if dt <= 0:
+            continue
+        series.extend([None] if dt > HR_GAP_S else [h1] * dt)
+    best, total, run = None, 0.0, 0
+    for i, v in enumerate(series):
+        if v is None:
+            total, run = 0.0, 0
+            continue
+        total += v
+        run += 1
+        if run > secs:
+            total -= series[i - secs]
+            run -= 1
+        if run == secs and (best is None or total > best * secs):
+            best = total / secs
+    return round(best, 1) if best is not None else None

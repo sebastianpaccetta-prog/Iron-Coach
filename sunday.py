@@ -16,9 +16,9 @@ import sys
 from datetime import date, datetime, timedelta
 
 from pipeline import db
-from pipeline.config import DB_PATH, PLAN_OUTPUT_PATH, RACE_DATE, ROOT
-from pipeline.parse_apple_health import load_apple_health
-from pipeline.parse_strava import load_strava
+from pipeline.config import BIRTH_DATE, DB_PATH, PLAN_OUTPUT_PATH, RACE_DATE, ROOT
+from pipeline.parse_apple_health import date_of_birth, load_apple_health
+from pipeline.parse_strava import best_hr_efforts, load_strava
 from pipeline.plan import evaluate_completion, generate_week, plan_anchor
 from pipeline.site_export import export_site_data
 from pipeline.training_load import activity_tss, load_series, recovery_status, weekly_summary
@@ -60,6 +60,11 @@ def main():
         if inserted == 0:
             print("   ! No new activities. If you trained since the last update, check that the new export's "
                   "activities.csv or activities/ folder is in data/strava/ (see HOW_TO_UPDATE.md).")
+        best = best_hr_efforts(db.pending_hr_streams(conn), strava_rows)
+        if best:
+            db.save_best_hr(conn, best)
+            print(f"   {len(best)} run/ride HR streams read for threshold HR "
+                  f"({sum(1 for v in best.values() if v)} with 20+ min of HR)")
 
         step("Parsing Apple Health export (streaming)")
         health_rows = load_apple_health()
@@ -74,7 +79,9 @@ def main():
         if args.feel:
             rec_status["flag"] = {"good": "good", "normal": "normal", "tired": "caution"}[args.feel]
             rec_status["reasons"] = [f"you reported feeling {args.feel}"]
-        zones = build_zones(activities, resting_hr=rec_status.get("resting_hr_7d"))
+        dob = BIRTH_DATE or date_of_birth()
+        age = (today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))) if dob else None
+        zones = build_zones(activities, resting_hr=rec_status.get("resting_hr_7d"), age=age)
         for a in activities:
             a["tss"] = activity_tss(a, zones)
         conn.executemany("UPDATE activities SET tss = ? WHERE id = ?", [(a["tss"], a["id"]) for a in activities])
@@ -82,6 +89,10 @@ def main():
         weekly = weekly_summary(activities, weeks=20, end=today)
         print(f"   Run LTHR {zones['run']['lthr']} bpm | Bike LTHR {zones['bike']['lthr']} bpm | "
               f"Max HR {zones['max_hr']} | Threshold pace {zones['run']['threshold_pace']} /{zones['run']['pace_unit']}")
+        print(f"     HR zones: {zones['method_label']} - {zones['zones_source']}")
+        print(f"     run LTHR: {zones['run']['lthr_source']}")
+        print(f"     bike LTHR: {zones['bike']['lthr_source']}")
+        print(f"     max HR: {zones['max_hr_source']}")
         print(f"   CTL {load[-1]['ctl']} | ATL {load[-1]['atl']} | TSB {load[-1]['tsb']} | Recovery: {rec_status['flag']}")
 
         # 4. Evaluate last week, generate next --------------------------------

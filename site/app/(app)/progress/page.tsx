@@ -69,23 +69,23 @@ export default function Progress() {
       <div className="grid grid-2">
         <section className="panel">
           <h2 className="panel-title">Run zones</h2>
-          <p className="panel-sub">LTHR {z.run.lthr} bpm · threshold {z.run.threshold_pace ?? "–"}/{u}</p>
+          <p className="panel-sub">{z.method_label} · {z.zones_source} · threshold pace {z.run.threshold_pace ?? "–"}/{u}</p>
           <table className="zones-table">
             <thead><tr><th>Zone</th><th>Name</th><th>HR</th><th>Pace</th></tr></thead>
             <tbody>
-              {z.run.hr_zones.map((hz: any, i: number) => (
+              {z.run.hr_zones.map((hz: any) => (
                 <tr key={hz.zone}>
                   <td><b>{hz.zone}</b></td><td>{hz.name}</td><td>{hz.low}–{hz.high}</td>
-                  <td>{z.run.pace_zones ? `${z.run.pace_zones[i].slow}–${z.run.pace_zones[i].fast}` : "–"}</td>
+                  <td>{(() => { const pz = z.run.pace_zones?.find((p: any) => p.zone === hz.zone); return pz ? `${pz.slow}–${pz.fast}` : "–"; })()}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-          {z.run.lthr_source && <p className="fine">LTHR: {z.run.lthr_source}.</p>}
+          {z.run.lthr_source && <p className="fine">Estimated LTHR {z.run.lthr} (used for training load): {z.run.lthr_source}.</p>}
         </section>
         <section className="panel">
           <h2 className="panel-title">Bike zones</h2>
-          <p className="panel-sub">LTHR {z.bike.lthr} bpm{z.bike.ftp ? ` · FTP ${z.bike.ftp} W` : ""}</p>
+          <p className="panel-sub">{z.method_label} · {z.zones_source}{z.bike.ftp ? ` · FTP ${z.bike.ftp} W` : ""}</p>
           <table className="zones-table">
             <thead><tr><th>Zone</th><th>Name</th><th>HR</th></tr></thead>
             <tbody>
@@ -94,8 +94,9 @@ export default function Progress() {
               ))}
             </tbody>
           </table>
-          {z.bike.lthr_source && <p className="fine">LTHR: {z.bike.lthr_source}.</p>}
-          <p className="fine">Max HR {z.max_hr}{z.max_hr_source ? ` (${z.max_hr_source})` : ""}{z.resting_hr ? ` · resting ${Math.round(z.resting_hr)}` : ""}. Set tested values in pipeline/config.py (LTHR_OVERRIDE, MAX_HR_OVERRIDE).</p>
+          {z.bike.lthr_source && <p className="fine">Estimated LTHR {z.bike.lthr} (used for training load): {z.bike.lthr_source}.</p>}
+          <p className="fine">Max HR {z.max_hr}{z.max_hr_source ? ` (${z.max_hr_source})` : ""}{z.resting_hr ? ` · resting ${Math.round(z.resting_hr)}` : ""}.
+            {" "}Know your max HR? Set MAX_HR under Athlete settings in pipeline/config.py.</p>
         </section>
       </div>
     </>

@@ -8,6 +8,16 @@ RACE_DATE = date(2027, 2, 1)
 RACE_NAME = "Half Ironman 70.3"
 ATHLETE_NAME = "Sebastian"
 
+# ---- Athlete settings ------------------------------------------------------------
+# Heart-rate zones use heart rate reserve (Karvonen): resting + % x (max - resting).
+# Without a resting HR from Apple Health they fall back to % of max HR (age-based).
+# Your max HR in bpm, from a field test or the highest HR you have seen in an all-out
+# effort (e.g. the end of a hard hill repeat). None = your recorded history, else 220 - age.
+MAX_HR = None
+# Date of birth, e.g. date(2004, 6, 21), for the 220 - age fallback. None = read from Apple Health.
+BIRTH_DATE = None
+# ----------------------------------------------------------------------------------
+
 # Units for run pace, bike speed and distances: "imperial" (min/mi, mph, mi)
 # or "metric" (min/km, km/h, km). Swim pace is always per 100 m.
 UNITS = "imperial"
@@ -25,6 +35,11 @@ SWIM_M, BIKE_M, RUN_M = 1900, 90_000, 21_100
 # Biggest training week, chosen inside this range from your current fitness
 # (see plan.peak_week_hours). 11 h is the floor for a sub-5 70.3, 14 h the ceiling.
 PEAK_WEEK_HOURS_RANGE = (11.0, 14.0)
+
+# Tested lactate threshold heart rate (bpm), used only for training load (TSS) from HR.
+# Test (Friel): warm up, then 30 min solo as hard as you can hold; the average HR of the
+# last 20 min is your LTHR. Leave None to estimate from your history.
+LTHR_OVERRIDE = {"run": None, "bike": None}
 
 DATA_DIR = ROOT / "data"
 DB_PATH = DATA_DIR / "normalized.db"

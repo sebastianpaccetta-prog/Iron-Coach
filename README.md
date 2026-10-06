@@ -128,9 +128,14 @@ Step-by-step export instructions, folder naming and a weekly checklist: `HOW_TO_
   Mon swim + strength, Tue run quality, Wed bike quality, Thu swim, Fri easy run or rest,
   Sat long ride (+ brick run from build phase), Sun long run. Sessions under their minimum
   length are dropped, lowest priority first, when the weekly hours are small.
-* **Zones**: run LTHR = average of your three highest 20-70 min average-HR runs in the last
-  6 months, bike LTHR likewise (or run - 5), five zones as % of LTHR. Threshold pace from
-  your best 20-70 min runs. Override anything in `pipeline/zones.py`.
+* **Zones**: five HR zones from heart rate reserve (Karvonen: resting + % x (max - resting),
+  at 50-60 / 60-70 / 70-80 / 80-90 / 90-100%), with resting HR the 7-day average from Apple
+  Health. Without resting HR they fall back to the same % of max HR (age-based). Max HR:
+  `MAX_HR` under *Athlete settings* in `config.py`, else your second-highest recorded max aged
+  0.7 bpm/year, else 220 - age (date of birth from Apple Health or `BIRTH_DATE`). Run and bike
+  share the zones. LTHR is estimated only for training load: `LTHR_OVERRIDE` if set, else the
+  best 20-min HR stretch inside any 30+ min run of the last 18 months, never below 88% of max
+  HR (bike: never below run LTHR - 5). Threshold pace from your best 20-70 min runs.
 * **Load**: TSS = hours x IF^2 x 100 with IF from power/FTP, HR/LTHR, RPE or a per-sport
   default. CTL = 42-day average, ATL = 7-day, TSB = CTL - ATL.
 

@@ -31,6 +31,8 @@ CREATE TABLE IF NOT EXISTS activities (
     perceived_exertion REAL,
     strava_relative_effort REAL,
     tss REAL,                      -- computed training stress estimate
+    best20_hr REAL,                -- highest 20-min mean HR, from the raw file's HR stream
+    hr_checked INTEGER DEFAULT 0,  -- 1 once the raw file was looked at for best20_hr
     UNIQUE(date, start_time, sport)
 );
 CREATE INDEX IF NOT EXISTS idx_activities_date ON activities(date);
@@ -54,6 +56,18 @@ CREATE TABLE IF NOT EXISTS plans (
 );
 """
 
+# Columns added after the first release; CREATE TABLE IF NOT EXISTS does not add them
+# to an existing database.
+ADDED_COLUMNS = {"activities": [("best20_hr", "REAL"), ("hr_checked", "INTEGER DEFAULT 0")]}
+
+
+def _migrate(conn):
+    for table, cols in ADDED_COLUMNS.items():
+        have = {r[1] for r in conn.execute(f"PRAGMA table_info({table})")}
+        for name, decl in cols:
+            if name not in have:
+                conn.execute(f"ALTER TABLE {table} ADD COLUMN {name} {decl}")
+
 
 @contextmanager
 def connect():
@@ -62,6 +76,7 @@ def connect():
     conn.row_factory = sqlite3.Row
     try:
         conn.executescript(SCHEMA)
+        _migrate(conn)
         yield conn
         conn.commit()
     finally:
@@ -99,6 +114,20 @@ def import_state(conn):
     newest = conn.execute("SELECT date, start_time FROM activities WHERE source_id NOT LIKE 'file:%' "
                           "ORDER BY date DESC, start_time DESC LIMIT 1").fetchone()
     return file_ids, (tuple(newest) if newest else None)
+
+
+def pending_hr_streams(conn):
+    """Run and bike activities long enough for a 20-min HR window whose raw file
+    has not been read yet."""
+    return [dict(r) for r in conn.execute(
+        "SELECT id, source_id, date, start_time, sport FROM activities "
+        "WHERE sport IN ('run', 'bike') AND duration_s >= 1200 AND NOT hr_checked")]
+
+
+def save_best_hr(conn, best_by_id):
+    """best_by_id: {activity id: best 20-min HR or None}. Marks each row as checked."""
+    conn.executemany("UPDATE activities SET best20_hr = ?, hr_checked = 1 WHERE id = ?",
+                     [(v, k) for k, v in best_by_id.items()])
 
 
 def upsert_recovery(conn, rows):

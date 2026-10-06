@@ -7,7 +7,7 @@ else (steps, clinical records, routes) are skipped entirely.
 """
 import re
 from collections import defaultdict
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 
 from .config import APPLE_HEALTH_DIR_CANDIDATES, APPLE_HEALTH_KEY_FILE, find_dir
 
@@ -89,3 +89,17 @@ def load_apple_health(since=None):
         return []
     print(f"   reading {d / APPLE_HEALTH_KEY_FILE}")
     return list(parse_export(d / APPLE_HEALTH_KEY_FILE, since=since))
+
+
+_DOB = re.compile(r'DateOfBirth="(\d{4}-\d{2}-\d{2})"')
+
+
+def date_of_birth():
+    """Date of birth from the export's <Me> element, which sits just after the DTD
+    near the top of the file, so only the first 256 KB are read."""
+    d = find_dir(APPLE_HEALTH_DIR_CANDIDATES, APPLE_HEALTH_KEY_FILE)
+    if d is None:
+        return None
+    with open(d / APPLE_HEALTH_KEY_FILE, encoding="utf-8", errors="ignore") as f:
+        m = _DOB.search(f.read(262_144))
+    return date.fromisoformat(m.group(1)) if m else None

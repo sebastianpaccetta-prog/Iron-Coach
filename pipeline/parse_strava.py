@@ -112,6 +112,25 @@ def activity_files(candidates=None):
     return sorted(found.values(), key=lambda f: f.name)
 
 
+def best_hr_efforts(pending, strava_rows, window_s=1200):
+    """{activity id: highest `window_s` mean HR or None} for `pending` db rows, read
+    from their raw files. CSV rows are matched to files through the CSV's Filename
+    column; rows imported from a file carry the name in their source id. Rows whose
+    file is named but not on disk are left out, so a later export can fill them in."""
+    from .parse_activity_files import best_hr_window, hr_stream
+    files = {f.name: f for f in activity_files()}
+    by_key = {(r["date"], r["start_time"], r["sport"]): r["filename"] for r in strava_rows if r.get("filename")}
+    out = {}
+    for a in pending:
+        sid = a["source_id"] or ""
+        name = sid[5:] if sid.startswith("file:") else by_key.get((a["date"], a["start_time"], a["sport"]))
+        path = files.get(name)
+        if name and not path:
+            continue
+        out[a["id"]] = best_hr_window(hr_stream(path), window_s) if path else None
+    return out
+
+
 def load_strava(known_source_ids=(), imported_until=None):
     """Rows from the newest activities.csv, plus rows parsed from raw activity
     files that the CSV does not list and that start after its newest activity
