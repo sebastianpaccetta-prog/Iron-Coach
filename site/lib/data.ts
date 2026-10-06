@@ -94,15 +94,19 @@ export interface SiteData {
 export const data = raw as unknown as SiteData;
 
 export const SPORT_COLOR: Record<string, string> = {
-  swim: "#0284C7",
-  bike: "#F26522",
-  run: "#7C3AED",
-  strength: "#059669",
-  other: "#6B7280",
+  swim: "#2F7EC1",
+  bike: "#1B998B",
+  run: "#FC5200",
+  strength: "#6D6D78",
+  other: "#A6A6B0",
 };
 
 export const SPORT_EMOJI: Record<string, string> = {
   swim: "🏊", bike: "🚴", run: "🏃", strength: "💪", other: "🚶", rest: "😴", race: "🏁",
+};
+
+export const PHASE_COLOR: Record<string, string> = {
+  base: "#B9CCDD", build: "#5B7A95", peak: "#FC5200", taper: "#FDB48C", race: "#242428",
 };
 
 export const SPORT_LABEL: Record<string, string> = {

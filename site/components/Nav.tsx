@@ -4,10 +4,10 @@ import { usePathname } from "next/navigation";
 import Logo from "./Logo";
 
 const LINKS = [
-  { href: "/", label: "This week" },
-  { href: "/feed", label: "Activity feed" },
+  { href: "/week", label: "This week" },
+  { href: "/feed", label: "Activities" },
   { href: "/progress", label: "Progress" },
-  { href: "/plan", label: "Plan overview" },
+  { href: "/plan", label: "Season plan" },
   { href: "/update", label: "How to update" },
 ];
 
@@ -16,8 +16,8 @@ export default function Nav() {
   return (
     <nav className="nav">
       <div className="nav-inner">
-        <Link href="/" className="brand">
-          <Logo /> Iron Coach
+        <Link href="/" className="brand" aria-label="Iron Coach home">
+          <Logo />
         </Link>
         <div className="nav-links">
           {LINKS.map((l) => (

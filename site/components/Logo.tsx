@@ -1,10 +1,13 @@
-export default function Logo({ size = 28 }: { size?: number }) {
-  // Original mark: a stylised "IC" finish-line chevron in the brand orange.
+export default function Logo({ size = 26, light = false }: { size?: number; light?: boolean }) {
+  // A finish-line chevron: an upright bar and an arrow pointing to the line.
   return (
-    <svg width={size} height={size} viewBox="0 0 32 32" aria-label="Iron Coach logo" role="img">
-      <rect x="1" y="1" width="30" height="30" rx="8" fill="#F26522" />
-      <path d="M8 9h4v14H8z" fill="#fff" />
-      <path d="M15 9l9 7-9 7v-4.5l4-2.5-4-2.5z" fill="#fff" />
-    </svg>
+    <span className={`logo${light ? " light" : ""}`}>
+      <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden="true">
+        <rect width="32" height="32" rx="4" fill="#FC5200" />
+        <path d="M8 8h4.5v16H8z" fill="#fff" />
+        <path d="M15.5 8L25 16l-9.5 8v-5l3.6-3-3.6-3z" fill="#fff" />
+      </svg>
+      <span className="wordmark">Iron Coach</span>
+    </span>
   );
 }

@@ -1,21 +1,20 @@
 import type { Metadata } from "next";
+import { Archivo } from "next/font/google";
 import "./globals.css";
-import Nav from "@/components/Nav";
-import { data } from "@/lib/data";
+
+// Archivo is variable on both weight and width: the condensed cut drives
+// headlines and big numbers, the normal width is the body face.
+const archivo = Archivo({ subsets: ["latin"], axes: ["wdth"], variable: "--font-archivo", display: "swap" });
 
 export const metadata: Metadata = {
   title: "Iron Coach",
-  description: "Personal 70.3 training dashboard",
+  description: "A 70.3 coach that plans your week from your Strava history.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body>
-        <Nav />
-        <main className="container">{children}</main>
-        <p className="footer">Data updated {new Date(data.generated_at).toLocaleString("en-US")} · Iron Coach</p>
-      </body>
+    <html lang="en" className={archivo.variable}>
+      <body>{children}</body>
     </html>
   );
 }

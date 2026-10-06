@@ -5,10 +5,11 @@ import {
 import { data, fmtDate, SPORT_COLOR, SPORT_LABEL, fmtHours } from "@/lib/data";
 
 const SPORTS = ["swim", "bike", "run", "strength", "other"] as const;
-const AXIS = { fontSize: 12, fill: "#8a8a8a" };
-const GRID = "#eeeeeb";
+const AXIS = { fontSize: 12, fill: "#8a8a94", fontFamily: "var(--font-archivo)" };
+const GRID = "#ececf0";
 
-const tipStyle = { borderRadius: 8, border: "1px solid #e6e6e3", boxShadow: "0 2px 8px rgba(0,0,0,.06)", fontSize: 13 };
+const tipStyle = { borderRadius: 4, border: "1px solid #dfdfe8", boxShadow: "0 4px 16px rgba(0,0,0,.08)", fontSize: 13 };
+const LEGEND = { fontSize: 13, color: "#6d6d78" };
 
 export function WeeklyVolumeChart() {
   const rows = data.weekly.map((w) => ({
@@ -26,11 +27,11 @@ export function WeeklyVolumeChart() {
         <CartesianGrid vertical={false} stroke={GRID} />
         <XAxis dataKey="week" tick={AXIS} tickLine={false} axisLine={false} interval="preserveStartEnd" />
         <YAxis tick={AXIS} tickLine={false} axisLine={false} unit="h" />
-        <Tooltip contentStyle={tipStyle} formatter={(v: number, n: string) => [fmtHours(v), SPORT_LABEL[n] ?? n]} cursor={{ fill: "#f2f2ef" }} />
-        <Legend iconType="square" iconSize={10} wrapperStyle={{ fontSize: 13 }} formatter={(v) => SPORT_LABEL[v] ?? v} />
+        <Tooltip contentStyle={tipStyle} formatter={(v: number, n: string) => [fmtHours(v), SPORT_LABEL[n] ?? n]} cursor={{ fill: "#f4f4f6" }} />
+        <Legend iconType="square" iconSize={10} wrapperStyle={LEGEND} formatter={(v) => SPORT_LABEL[v] ?? v} />
         {SPORTS.map((s, i) => (
           <Bar key={s} dataKey={s} isAnimationActive={false} stackId="a" fill={SPORT_COLOR[s]} stroke="#fff" strokeWidth={1}
-               radius={i === SPORTS.length - 1 ? [4, 4, 0, 0] : 0} />
+               radius={i === SPORTS.length - 1 ? [2, 2, 0, 0] : 0} />
         ))}
       </BarChart>
     </ResponsiveContainer>
@@ -46,11 +47,11 @@ export function LoadChart() {
         <XAxis dataKey="label" tick={AXIS} tickLine={false} axisLine={false} minTickGap={40} />
         <YAxis tick={AXIS} tickLine={false} axisLine={false} />
         <Tooltip contentStyle={tipStyle} />
-        <Legend iconType="plainline" wrapperStyle={{ fontSize: 13 }} />
-        <ReferenceLine y={0} stroke="#cfcfcb" />
-        <Line isAnimationActive={false} type="monotone" dataKey="ctl" name="Fitness (CTL)" stroke="#F26522" strokeWidth={2} dot={false} />
-        <Line isAnimationActive={false} type="monotone" dataKey="atl" name="Fatigue (ATL)" stroke="#7C3AED" strokeWidth={2} dot={false} />
-        <Line isAnimationActive={false} type="monotone" dataKey="tsb" name="Form (TSB)" stroke="#0284C7" strokeWidth={2} dot={false} strokeDasharray="4 3" />
+        <Legend iconType="plainline" wrapperStyle={LEGEND} />
+        <ReferenceLine y={0} stroke="#c8c8d0" />
+        <Line isAnimationActive={false} type="monotone" dataKey="ctl" name="Fitness (CTL)" stroke="#FC5200" strokeWidth={2.5} dot={false} />
+        <Line isAnimationActive={false} type="monotone" dataKey="atl" name="Fatigue (ATL)" stroke="#242428" strokeWidth={1.5} dot={false} />
+        <Line isAnimationActive={false} type="monotone" dataKey="tsb" name="Form (TSB)" stroke="#2F7EC1" strokeWidth={1.5} dot={false} strokeDasharray="4 3" />
       </LineChart>
     </ResponsiveContainer>
   );
@@ -60,7 +61,7 @@ export function RecoveryChart({ metric, color, unit }: { metric: "hrv" | "restin
   const rows = data.recovery
     .filter((r) => r[metric] != null)
     .map((r) => ({ label: fmtDate(r.date, { month: "short", day: "numeric" }), v: Math.round((r[metric] as number) * 10) / 10 }));
-  if (rows.length < 2) return <p style={{ color: "#8a8a8a", fontSize: 13 }}>Not enough data yet.</p>;
+  if (rows.length < 2) return <p className="fine">Not enough data yet.</p>;
   return (
     <ResponsiveContainer width="100%" height={160}>
       <LineChart data={rows} margin={{ top: 8, right: 8, left: -22, bottom: 0 }}>
@@ -84,10 +85,10 @@ export function PlannedVsActualChart() {
         <CartesianGrid vertical={false} stroke={GRID} />
         <XAxis dataKey="week" tick={AXIS} tickLine={false} axisLine={false} interval={1} />
         <YAxis tick={AXIS} tickLine={false} axisLine={false} unit="h" />
-        <Tooltip contentStyle={tipStyle} formatter={(v: number) => fmtHours(v)} cursor={{ fill: "#f2f2ef" }} />
-        <Legend iconType="square" iconSize={10} wrapperStyle={{ fontSize: 13 }} />
-        <Bar isAnimationActive={false} dataKey="actual" name="Completed" fill="#F26522" radius={[4, 4, 0, 0]} />
-        <Bar isAnimationActive={false} dataKey="target" name="Planned" fill="#fbd1bd" radius={[4, 4, 0, 0]} />
+        <Tooltip contentStyle={tipStyle} formatter={(v: number) => fmtHours(v)} cursor={{ fill: "#f4f4f6" }} />
+        <Legend iconType="square" iconSize={10} wrapperStyle={LEGEND} />
+        <Bar isAnimationActive={false} dataKey="actual" name="Completed" fill="#FC5200" radius={[2, 2, 0, 0]} />
+        <Bar isAnimationActive={false} dataKey="target" name="Planned" fill="#FED3BD" radius={[2, 2, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );

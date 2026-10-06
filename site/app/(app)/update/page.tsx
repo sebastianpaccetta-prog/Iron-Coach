@@ -90,34 +90,36 @@ const TROUBLE = [
 export default function Update() {
   return (
     <>
-      <h1 className="page-title">How to update</h1>
-      <p className="page-sub">
+      <header className="page-head">
+        <h1 className="display">How to update</h1>
+        <p>
         There is no upload on this site — it is rebuilt from a data file your PC generates. The weekly routine is
         <b> export → drop the folder in → run one command</b>. About 5 minutes, ideally Sunday.
-      </p>
+        </p>
+      </header>
 
       <div className="steps">
         {STEPS.map((s) => (
-          <div className="card step" key={s.n}>
+          <div className="panel step" key={s.n}>
             <div className="step-head">
               <span className="step-num">{s.n}</span>
               <h2>{s.title}</h2>
-              <span className="pill dark">{s.tag}</span>
+              <span className="tag">{s.tag}</span>
             </div>
             <div className="step-body">{s.body}</div>
           </div>
         ))}
       </div>
 
-      <div className="grid grid-2" style={{ marginTop: 16 }}>
-        <div className="card">
-          <h2>Sunday checklist</h2>
+      <div className="grid grid-2">
+        <div className="panel">
+          <h2 className="panel-title">Sunday checklist</h2>
           <ul className="checklist">
             {CHECKLIST.map((c) => <li key={c}><span className="box" />{c}</li>)}
           </ul>
         </div>
-        <div className="card">
-          <h2>Troubleshooting</h2>
+        <div className="panel">
+          <h2 className="panel-title">Troubleshooting</h2>
           <dl className="trouble">
             {TROUBLE.map((t) => (
               <div key={t.q}><dt>{t.q}</dt><dd>{t.a}</dd></div>
